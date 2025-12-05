@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Demande envoyée - AP New World{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="alert alert-success">
+                <h4 class="alert-heading">✅ Demande envoyée avec succès !</h4>
+                <p><strong>Référence de votre demande : #{{ producer.id }}</strong></p>
+                <p>Votre demande d'inscription a été enregistrée et sera examinée par notre équipe sous peu.</p>
+                <hr>
+                <p class="mb-0"><strong>Prochaines étapes :</strong></p>
+                <ul>
+                    <li>Notre équipe va examiner votre dossier</li>
+                    <li>Vous recevrez un email à l'adresse <strong>{{ producer.email }}</strong> une fois votre demande traitée</li>
+                    <li>Si votre demande est pré-approuvée, un audit en présentiel sera programmé</li>
+                </ul>
+            </div>
+
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>📋 Récapitulatif de votre demande</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Nom du contact :</strong> {{ producer.contactName }}</p>
+                    <p><strong>Email :</strong> {{ producer.email }}</p>
+                    <p><strong>Téléphone :</strong> {{ producer.phone }}</p>
+                    <p><strong>SIRET :</strong> {{ producer.siret }}</p>
+                    <p><strong>Adresse :</strong> {{ producer.address }}</p>
+                    <p><strong>Activité :</strong> {{ producer.activity }}</p>
+                    <p><strong>Date de demande :</strong> {{ producer.registrationDate|date('d/m/Y à H:i') }}</p>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ path('home') }}" class="btn btn-outline-secondary">
+                    ← Retour à l'accueil
+                </a>
+                <a href="{{ path('producer_registration') }}" class="btn btn-primary">
+                    📝 Faire une autre demande
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

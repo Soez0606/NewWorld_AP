@@ -1,0 +1,73 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}🔍 Producteurs en attente d'audit{% endblock %}
+
+{% block page_content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Audits requis ({{ producers|length }})</h1>
+    <a href="{{ path('admin') }}" class="btn btn-secondary">← Retour au dashboard</a>
+</div>
+
+{% if app.session.get('pending_mailto') %}
+    <div class="alert alert-info alert-dismissible fade show">
+        <h5>📧 Email prêt à être envoyé</h5>
+        <a href="{{ app.session.get('pending_mailto') }}" class="btn btn-success btn-lg">📨 Ouvrir l'email</a>
+        <a href="{{ path('admin_audit_required') }}" class="btn btn-secondary">Fermer</a>
+    </div>
+{% endif %}
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{% endfor %}
+
+{% for message in app.flashes('warning') %}
+    <div class="alert alert-warning alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+{% endfor %}
+
+{% if producers|length == 0 %}
+<div class="alert alert-success">
+    <h4>✅ Aucun audit en attente</h4>
+    <p>Tous les audits ont été traités.</p>
+</div>
+{% else %}
+<div class="row">
+    {% for producer in producers %}
+    <div class="col-md-6 mb-4">
+        <div class="card h-100 border-info">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Audit #{{ producer.id }}</h5>
+                <span class="badge bg-light text-dark">Audit requis</span>
+            </div>
+            <div class="card-body">
+                <p><strong>👤 Contact:</strong> {{ producer.contactName }}</p>
+                <p><strong>📧 Email:</strong> {{ producer.email }}</p>
+                <p><strong>📞 Téléphone:</strong> {{ producer.phone }}</p>
+                <p><strong>📍 Adresse:</strong> {{ producer.address }}</p>
+                <p><strong>💼 Activité:</strong><br>{{ producer.activity }}</p>
+            </div>
+            <div class="card-footer">
+                <div class="btn-group w-100">
+                    <a href="{{ path('admin_producer_approve_audit', {id: producer.id}) }}" 
+                       class="btn btn-success"
+                       onclick="return confirm('Approuver cet audit ? Un compte sera créé pour {{ producer.contactName }}.')">
+                        ✅ Approuver l'audit
+                    </a>
+                    <a href="{{ path('admin_producer_reject_audit', {id: producer.id}) }}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('Refuser cet audit ? Un email de refus sera envoyé à {{ producer.email }}.')">
+                        ❌ Refuser l'audit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

@@ -5,13 +5,32 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
+        # 2. DÉFINISSEZ VOTRE PROPRE FOURNISSEUR DOCTRINE
+        # app_user_provider:
+        #     entity:
+        #         # Indiquez à Symfony d'utiliser cette entité pour charger les utilisateurs
+        #         class: App\Entity\Users
+        #         # propriété utilisée pour l'identification (email)
+        #         property: email
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        # admin:
+        #     pattern: ^/admin
+        #     form_login:
+        #         login_path: admin_login
+        #         check_path: admin_login
+        #         default_target_path: admin # Où rediriger après succès (ex: vers le dashboard)
+        #         # AJOUTEZ CES DEUX LIGNES
+        #         username_parameter: email   # <-- Utilise le champ 'name="email"' de votre Twig
+        #         password_parameter: password # <-- Utilise le champ 'name="password"' de votre Twig
+        #     logout:
+        #         path: admin_logout
+        #         target: home
         main:
             lazy: true
-            provider: users_in_memory
+            provider: users_in_memory #app_user_provider
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -22,7 +41,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # Autoriser l'accès à la route de connexion pour tout le monde
+        #  - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #  - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
 
 when@test:

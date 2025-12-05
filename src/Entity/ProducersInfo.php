@@ -17,6 +17,13 @@ class ProducersInfo
     #[ORM\Column]
     private ?int $user_id = null;
 
+    #[ORM\Column(length: 100)]
+    private ?string $contact_name = null;
+
+    #[ORM\Column(length: 150)]
+    private ?string $email = null;
+
+
     #[ORM\Column(length: 255)]
     private ?string $address = null;
 
@@ -44,6 +51,15 @@ class ProducersInfo
     #[ORM\Column(length: 255)]
     private ?string $status_audit = null;
 
+    //cstatus roles constantes 
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_AUDIT_REQUIRED = 'audit_required';
+    public const STATUS_APPROVED = 'approved';
+    public const STATUS_REJECTED = 'rejected';
+    public const STATUS_AUDIT_REJECTED = 'audit_rejected';
+
+
     public function getId(): ?int
     {
         return $this->id;
@@ -57,6 +73,30 @@ class ProducersInfo
     public function setUserId(int $user_id): static
     {
         $this->user_id = $user_id;
+
+        return $this;
+    }
+
+      public function getContactName(): ?string
+    {
+        return $this->contact_name;
+    }
+
+    public function setContactName(string $contact_name): static
+    {
+        $this->contact_name = $contact_name;
+
+        return $this;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
 
         return $this;
     }
@@ -167,5 +207,34 @@ class ProducersInfo
         $this->status_audit = $status_audit;
 
         return $this;
+    }
+
+    //getters setters pour les roles 
+
+      public function isPending(): bool
+    {
+        return $this->status_audit === self::STATUS_PENDING;
+    }
+
+    public function requiresAudit(): bool
+    {
+        return $this->status_audit === self::STATUS_AUDIT_REQUIRED;
+    }
+
+    public function isApproved(): bool
+    {
+        return $this->status_audit === self::STATUS_APPROVED;
+    }
+    
+    public function getStatusLabel(): string
+    {
+        return match($this->status_audit) {
+            self::STATUS_PENDING => 'En attente',
+            self::STATUS_AUDIT_REQUIRED => 'Audit requis',
+            self::STATUS_APPROVED => 'Validé',
+            self::STATUS_REJECTED => 'Refusé',
+            self::STATUS_AUDIT_REJECTED => 'Audit refusé',
+            default => 'Inconnu',
+        };
     }
 }

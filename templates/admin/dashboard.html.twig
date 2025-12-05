@@ -1,0 +1,79 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block page_title %}Tableau de Bord - AP New World{% endblock %}
+
+{% block page_content %}
+<!-- Notifications -->
+{% if pendingCount > 0 %}
+<div class="alert alert-warning alert-dismissible fade show">
+    <h4>📋 {{ pendingCount }} demande(s) en attente !</h4>
+    <p>Des producteurs attendent votre validation.</p>
+    <a href="{{ path('admin_pending_requests') }}" class="btn btn-warning">Traiter les demandes</a>
+</div>
+{% endif %}
+
+{% if auditRequiredCount > 0 %}
+<div class="alert alert-info alert-dismissible fade show">
+    <h4>🔍 {{ auditRequiredCount }} audit(s) requis !</h4>
+    <p>Des producteurs doivent passer un audit en présentiel.</p>
+    <a href="{{ path('admin_audit_required') }}" class="btn btn-info">Voir les audits</a>
+</div>
+{% endif %}
+
+<!-- Statistiques -->
+<div class="row mt-4">
+    <div class="col-md-2">
+        <div class="card border-warning">
+            <div class="card-body text-center">
+                <h2 class="text-warning">{{ pendingCount }}</h2>
+                <small>En attente</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-info">
+            <div class="card-body text-center">
+                <h2 class="text-info">{{ auditRequiredCount }}</h2>
+                <small>Audits requis</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-success">
+            <div class="card-body text-center">
+                <h2 class="text-success">{{ totalProducers }}</h2>
+                <small>Producteurs</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card border-primary">
+            <div class="card-body text-center">
+                <h2 class="text-primary">{{ totalUsers }}</h2>
+                <small>Utilisateurs</small>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Actions rapides -->
+<div class="row mt-5">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h5>🚀 Actions Rapides</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ path('admin_pending_requests') }}" class="btn btn-warning btn-lg">
+                        📋 Traiter les demandes ({{ pendingCount }})
+                    </a>
+                    <a href="{{ path('admin_audit_required') }}" class="btn btn-info btn-lg">
+                        🔍 Gérer les audits ({{ auditRequiredCount }})
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

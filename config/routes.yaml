@@ -3,3 +3,51 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+# Routes principales
+# Routes principales
+home:
+    path: /
+    controller: App\Controller\ProducerController::home
+
+producer_registration:
+    path: /inscription-producteur
+    controller: App\Controller\ProducerController::registration
+
+producer_registration_success:
+    path: /inscription/success
+    controller: App\Controller\ProducerController::registrationSuccess
+
+# Route du dashboard admin
+admin:
+    path: /admin
+    controller: App\Controller\Admin\DashboardController::index
+
+# Routes personnalisées admin
+admin_pending_requests:
+    path: /admin/producer/pending-requests
+    controller: App\Controller\Admin\ProducerActionsController::pendingRequests
+
+admin_audit_required:
+    path: /admin/producer/audit-required
+    controller: App\Controller\Admin\ProducerActionsController::auditRequired
+
+admin_producer_validate:
+    path: /admin/producer/{id}/validate
+    controller: App\Controller\Admin\ProducerActionsController::validateProducer
+
+admin_producer_reject:
+    path: /admin/producer/{id}/reject
+    controller: App\Controller\Admin\ProducerActionsController::rejectProducer
+
+admin_producer_approve_audit:
+    path: /admin/producer/{id}/approve-audit
+    controller: App\Controller\Admin\ProducerActionsController::approveAudit
+
+admin_producer_reject_audit:
+    path: /admin/producer/{id}/reject-audit
+    controller: App\Controller\Admin\ProducerActionsController::rejectAudit
+
+# # Routes CRUD EasyAdmin (IMPORTANT pour EasyAdmin 4)
+# easy_admin_bundle:
+#     resource: '@EasyAdminBundle/Config/routes.php'
+#     prefix: /admin
