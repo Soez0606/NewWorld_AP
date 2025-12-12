@@ -1,12 +1,12 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block page_title %}Tableau de Bord - AP New World{% endblock %}
+{% block page_title %}Tableau de Bord - New World{% endblock %}
 
 {% block page_content %}
 <!-- Notifications -->
 {% if pendingCount > 0 %}
 <div class="alert alert-warning alert-dismissible fade show">
-    <h4>📋 {{ pendingCount }} demande(s) en attente !</h4>
+    <h4>{{ pendingCount }} demande(s) en attente !</h4>
     <p>Des producteurs attendent votre validation.</p>
     <a href="{{ path('admin_pending_requests') }}" class="btn btn-warning">Traiter les demandes</a>
 </div>
@@ -14,7 +14,7 @@
 
 {% if auditRequiredCount > 0 %}
 <div class="alert alert-info alert-dismissible fade show">
-    <h4>🔍 {{ auditRequiredCount }} audit(s) requis !</h4>
+    <h4>{{ auditRequiredCount }} audit(s) requis !</h4>
     <p>Des producteurs doivent passer un audit en présentiel.</p>
     <a href="{{ path('admin_audit_required') }}" class="btn btn-info">Voir les audits</a>
 </div>
@@ -61,15 +61,15 @@
     <div class="col-md-6">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                <h5>🚀 Actions Rapides</h5>
+                <h5>Actions Rapides</h5>
             </div>
             <div class="card-body">
                 <div class="d-grid gap-2">
                     <a href="{{ path('admin_pending_requests') }}" class="btn btn-warning btn-lg">
-                        📋 Traiter les demandes ({{ pendingCount }})
+                        Traiter les demandes ({{ pendingCount }})
                     </a>
                     <a href="{{ path('admin_audit_required') }}" class="btn btn-info btn-lg">
-                        🔍 Gérer les audits ({{ auditRequiredCount }})
+                        Gérer les audits ({{ auditRequiredCount }})
                     </a>
                 </div>
             </div>

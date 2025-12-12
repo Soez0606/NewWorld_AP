@@ -1,6 +1,6 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block page_title %}📋 Demandes en attente de validation{% endblock %}
+{% block page_title %}Demandes en attente de validation{% endblock %}
 
 {% block page_content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -10,9 +10,9 @@
 
 {% if app.session.get('pending_mailto') %}
     <div class="alert alert-info alert-dismissible fade show">
-        <h5>📧 Email prêt à être envoyé</h5>
+        <h5>Email prêt à être envoyé</h5>
         <p>Cliquez sur le bouton ci-dessous pour ouvrir votre client email :</p>
-        <a href="{{ app.session.get('pending_mailto') }}" class="btn btn-success btn-lg">📨 Ouvrir l'email</a>
+        <a href="{{ app.session.get('pending_mailto') }}" class="btn btn-success btn-lg">Ouvrir l'email</a>
         <a href="{{ path('admin_pending_requests') }}" class="btn btn-secondary">Fermer</a>
     </div>
 {% endif %}
@@ -33,7 +33,7 @@
 
 {% if producers|length == 0 %}
 <div class="alert alert-success">
-    <h4>✅ Aucune demande en attente</h4>
+    <h4>Aucune demande en attente</h4>
     <p>Toutes les demandes ont été traitées.</p>
 </div>
 {% else %}
@@ -46,25 +46,25 @@
                 <span class="badge bg-dark">En attente</span>
             </div>
             <div class="card-body">
-                <p><strong>👤 Contact:</strong> {{ producer.contactName }}</p>
-                <p><strong>📧 Email:</strong> {{ producer.email }}</p>
-                <p><strong>📅 Date:</strong> {{ producer.registrationDate|date('d/m/Y H:i') }}</p>
-                <p><strong>🏢 SIRET:</strong> {{ producer.siret }}</p>
-                <p><strong>📞 Téléphone:</strong> {{ producer.phone }}</p>
-                <p><strong>📍 Adresse:</strong> {{ producer.address }}</p>
-                <p><strong>💼 Activité:</strong><br>{{ producer.activity|slice(0, 150) }}...</p>
+                <p><strong>Contact:</strong> {{ producer.contactName }}</p>
+                <p><strong>Email:</strong> {{ producer.email }}</p>
+                <p><strong>Date:</strong> {{ producer.registrationDate|date('d/m/Y H:i') }}</p>
+                <p><strong>SIRET:</strong> {{ producer.siret }}</p>
+                <p><strong>Téléphone:</strong> {{ producer.phone }}</p>
+                <p><strong>Adresse:</strong> {{ producer.address }}</p>
+                <p><strong>Activité:</strong><br>{{ producer.activity|slice(0, 150) }}...</p>
             </div>
             <div class="card-footer">
                 <div class="btn-group w-100">
-                    <a href="{{ path('admin_producer_validate', {id: producer.id}) }}" 
-                       class="btn btn-success" 
+                    <a href="{{ path('admin_producer_validate', {id: producer.id}) }}"
+                       class="btn btn-success"
                        onclick="return confirm('Valider cette demande ? Un email d\\'audit sera envoyé à {{ producer.email }}.')">
-                        ✅ Valider
+                        Valider
                     </a>
-                    <a href="{{ path('admin_producer_reject', {id: producer.id}) }}" 
+                    <a href="{{ path('admin_producer_reject', {id: producer.id}) }}"
                        class="btn btn-danger"
                        onclick="return confirm('Refuser cette demande ? Un email de refus sera envoyé à {{ producer.email }}.')">
-                        ❌ Refuser
+                        Refuser
                     </a>
                 </div>
             </div>

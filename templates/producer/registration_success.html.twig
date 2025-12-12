@@ -1,13 +1,13 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Demande envoyée - AP New World{% endblock %}
+{% block title %}Demande envoyée - New World{% endblock %}
 
 {% block body %}
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="alert alert-success">
-                <h4 class="alert-heading">✅ Demande envoyée avec succès !</h4>
+                <h4 class="alert-heading">Demande envoyée avec succès !</h4>
                 <p><strong>Référence de votre demande : #{{ producer.id }}</strong></p>
                 <p>Votre demande d'inscription a été enregistrée et sera examinée par notre équipe sous peu.</p>
                 <hr>
@@ -21,7 +21,7 @@
 
             <div class="card mt-4">
                 <div class="card-header">
-                    <h5>📋 Récapitulatif de votre demande</h5>
+                    <h5>Récapitulatif de votre demande</h5>
                 </div>
                 <div class="card-body">
                     <p><strong>Nom du contact :</strong> {{ producer.contactName }}</p>
@@ -39,7 +39,7 @@
                     ← Retour à l'accueil
                 </a>
                 <a href="{{ path('producer_registration') }}" class="btn btn-primary">
-                    📝 Faire une autre demande
+                    Faire une autre demande
                 </a>
             </div>
         </div>

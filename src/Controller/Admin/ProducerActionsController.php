@@ -80,17 +80,17 @@ class ProducerActionsController extends AbstractDashboardController
             return $this->redirectToRoute('admin_pending_requests');
         }
 
-        $producer->setStatusAudit(ProducersInfo::STATUS_REJECTED);
-        $producer->setArchived(true);
+        $this->em->remove($producer);
         $this->em->flush();
 
         $mailtoLink = $this->generateRejectionEmail($producer);
         $request->getSession()->set('pending_mailto', $mailtoLink);
 
-        $this->addFlash('warning', 'Demande refusée ! Un email de refus doit être envoyé.');
+        $this->addFlash('warning', 'Demande refusée et supprimée de la base de données ! Un email doit être envoyé.');
 
         return $this->redirectToRoute('admin_pending_requests');
     }
+
 
     #[Route('/{id}/approve-audit', name: 'admin_producer_approve_audit')]
     public function approveAudit(int $id, Request $request): Response
@@ -152,49 +152,49 @@ class ProducerActionsController extends AbstractDashboardController
 
     private function generateValidationEmail(ProducersInfo $producer): string
     {
-        $subject = "🎉 Votre demande AP New World - Audit requis";
+        $subject = "Votre demande New World - Audit requis";
         $body = "Bonjour {$producer->getContactName()},\n\n";
         $body .= "Félicitations ! Votre demande d'adhésion a été pré-approuvée.\n\n";
-        $body .= "📅 PROCHAIN ÉTAPE : AUDIT EN PRÉSENTIEL\n";
+        $body .= "PROCHAIN ÉTAPE : AUDIT EN PRÉSENTIEL\n";
         $body .= "Un de nos inspecteurs vous contactera sous peu pour planifier un audit.\n\n";
-        $body .= "Cordialement,\nÉquipe AP New World";
+        $body .= "Cordialement,\nÉquipe New World";
 
         return $this->generateMailtoLink($producer->getEmail(), $subject, $body);
     }
 
     private function generateRejectionEmail(ProducersInfo $producer): string
     {
-        $subject = "Votre demande AP New World";
+        $subject = "Votre demande chez New World";
         $body = "Bonjour {$producer->getContactName()},\n\n";
         $body .= "Nous avons étudié votre demande avec attention.\n\n";
         $body .= "Malheureusement, nous ne pouvons pas donner suite à votre candidature pour le moment.\n\n";
-        $body .= "Cordialement,\nÉquipe AP New World";
+        $body .= "Cordialement,\nÉquipe New World";
 
         return $this->generateMailtoLink($producer->getEmail(), $subject, $body);
     }
 
     private function generateApprovalEmail(ProducersInfo $producer, string $tempPassword): string
     {
-        $subject = "🎉 Félicitations ! Votre adhésion AP New World est validée";
+        $subject = "Félicitations ! Votre adhésion chez New World est validée";
         $body = "Bonjour {$producer->getContactName()},\n\n";
         $body .= "Félicitations ! Votre audit a été validé avec succès.\n\n";
-        $body .= "📝 VOTRE COMPTE A ÉTÉ CRÉÉ\n";
+        $body .= "VOTRE COMPTE A ÉTÉ CRÉÉ\n";
         $body .= "Identifiant : {$producer->getEmail()}\n";
         $body .= "Mot de passe temporaire : {$tempPassword}\n";
         $body .= "Lien de connexion : http://localhost:8000/admin/login\n\n";
-        $body .= "⚠️ IMPORTANT : Changez votre mot de passe dès votre première connexion.\n\n";
-        $body .= "Bienvenue dans la communauté AP New World !\n\n";
-        $body .= "Cordialement,\nÉquipe AP New World";
+        $body .= "!! IMPORTANT : Changez votre mot de passe dès votre première connexion.\n\n";
+        $body .= "Bienvenue dans la communauté de New World !\n\n";
+        $body .= "Cordialement,\nÉquipe New World";
 
         return $this->generateMailtoLink($producer->getEmail(), $subject, $body);
     }
 
     private function generateAuditRejectionEmail(ProducersInfo $producer): string
     {
-        $subject = "Résultat de votre audit AP New World";
+        $subject = "Résultat de votre audit New World";
         $body = "Bonjour {$producer->getContactName()},\n\n";
         $body .= "Suite à votre audit, nous regrettons de vous informer que votre candidature n'a pas été retenue.\n\n";
-        $body .= "Cordialement,\nÉquipe AP New World";
+        $body .= "Cordialement,\nÉquipe New World";
 
         return $this->generateMailtoLink($producer->getEmail(), $subject, $body);
     }
@@ -208,7 +208,7 @@ class ProducerActionsController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('🌍 AP New World - Administration')
+            ->setTitle('New World - Administration')
             ->setFaviconPath('favicon.ico');
     }
 
