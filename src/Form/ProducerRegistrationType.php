@@ -17,11 +17,11 @@ class ProducerRegistrationType extends AbstractType
         $builder
             ->add('contact_name', TextType::class, [
                 'label' => 'Nom et prénom du contact',
-                'attr' => ['placeholder' => 'Ex: Jean Dupont']
+                'attr' => ['placeholder' => 'Veuillez entrer votre prénom et nom']
             ])
             ->add('email', EmailType::class, [
                 'label' => 'Email de contact',
-                'attr' => ['placeholder' => 'exemple@email.com']
+                'attr' => ['placeholder' => 'Veuillez entrer votre adresse email']
             ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse complète',
@@ -29,13 +29,13 @@ class ProducerRegistrationType extends AbstractType
             ])
             ->add('phone', TelType::class, [
                 'label' => 'Numéro de téléphone',
-                'attr' => ['placeholder' => '06 12 34 56 78']
+                'attr' => ['placeholder' => 'Tel']
             ])
             ->add('siret', TextType::class, [
                 'label' => 'Numéro SIRET (14 chiffres)',
                 'attr' => [
                     'maxlength' => 14,
-                    'placeholder' => '12345678901234'
+                    'placeholder' => 'Veuillez entrer votre numéro SIRET'
                 ]
             ])
             ->add('activity', TextareaType::class, [
