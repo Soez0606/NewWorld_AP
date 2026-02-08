@@ -1,17 +1,17 @@
+# config/packages/security.yaml
 security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        users_in_memory: { memory: null }
-        # 2. DÉFINISSEZ VOTRE PROPRE FOURNISSEUR DOCTRINE
-        # app_user_provider:
-        #     entity:
-        #         # Indiquez à Symfony d'utiliser cette entité pour charger les utilisateurs
-        #         class: App\Entity\Users
-        #         # propriété utilisée pour l'identification (email)
-        #         property: email
+        #users_in_memory: { memory: null }
+        #2. DÉFINISSEZ VOTRE PROPRE FOURNISSEUR DOCTRINE
+        app_user_provider:
+            entity:
+                # Indiquez à Symfony d'utiliser cette entité pour charger les utilisateurs
+                class: App\Entity\Users
+                property: email # propriété utilisée pour l'identification (email)
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
@@ -30,7 +30,20 @@ security:
         #         target: home
         main:
             lazy: true
-            provider: users_in_memory #app_user_provider
+            provider: app_user_provider #users_in_memory 
+            # form_login:
+            #     login_path: app_login
+            #     check_path: app_login
+            #     enable_csrf: true
+                # username_parameter: email 
+                # password_parameter: password
+            custom_authenticators:
+                - App\Security\FirstLoginAuthenticator
+            logout:
+                path: app_logout
+                # where to redirect after logout
+                target: app_login # Redirige vers la login page après logout
+           
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -41,10 +54,27 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        # Autoriser l'accès à la route de connexion pour tout le monde
-        #  - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        #  - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        # 1. Autoriser la Déconnexion pour TOUT LE MONDE (Indispensable)
+        # On suppose que votre route de logout est /admin/logout ou /logout. 
+        # Dans le doute, on autorise tout ce qui est logout.
+        - { path: ^/admin/logout, roles: PUBLIC_ACCESS }
+        - { path: ^/logout, roles: PUBLIC_ACCESS }
+
+        # 2. Autoriser la page de login
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        - { path: ^/admin/login, roles: PUBLIC_ACCESS } # Au cas où l'ancienne URL traîne
+
+        # 3. La définition de mot de passe (pour tous les connectés)
+        - { path: ^/admin/set-password, roles: IS_AUTHENTICATED_FULLY }
+
+        # 4. L'Espace Producteur (Uniquement pour eux)
+        - { path: ^/espace-producteur, roles: ROLE_PRODUCER }
+
+        # 5. Protéger le Backoffice (Dashboard)
+        # Au lieu de bloquer sur ROLE_SECRETARY, on met une liste des rôles internes autorisés
+        # OU on vérifie simplement qu'on n'est pas un simple user.
+        # Voici la liste complète pour ne bloquer personne du staff :
+        - { path: ^/admin, roles: [ROLE_SECRETARY, ROLE_PDG, ROLE_DIRECTOR, ROLE_MINI_ADMIN, ROLE_ADMIN] }
 
 when@test:
     security:

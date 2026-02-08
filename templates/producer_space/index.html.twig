@@ -1,0 +1,32 @@
+{# templates/producer_space/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1>Bienvenue dans votre espace producteur</h1>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mon Profil</h5>
+                    <p class="card-text">Voir et modifier mes informations.</p>
+                    <a href="{{ path('producer_space_profile') }}" class="btn btn-primary">Gérer mon profil</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Mes Contrats</h5>
+                    <p class="card-text">Consulter mes contrats en cours.</p>
+                    <a href="{{ path('producer_space_contracts') }}" class="btn btn-primary">Voir mes contrats</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-3">
+        <a href="{{ path('app_logout') }}" class="btn btn-danger">Se déconnecter</a>
+    </div>
+</div>
+{% endblock %}
