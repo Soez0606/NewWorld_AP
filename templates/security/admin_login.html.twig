@@ -1,34 +1,140 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion Admin - New World{% endblock %}
+{% block title %}Connexion Administration - New World{% endblock %}
+
+{% block stylesheets %}
+<style>
+    .login-page {
+        background-color: #f8f5f2; /* Beige doux pour le fond */
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+    }
+
+    .login-container {
+        background: #ffffff;
+        border-radius: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        border: none;
+        overflow: hidden;
+    }
+
+    .login-header {
+        background: var(--nw-dark-green); /* Le vert profond défini dans base.html.twig */
+        color: white;
+        padding: 30px;
+        text-align: center;
+    }
+
+    .login-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        margin-bottom: 0;
+    }
+
+    .login-body {
+        padding: 40px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: var(--nw-dark-green);
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        border: 2px solid #eee;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--nw-mid-green);
+        box-shadow: none;
+        background-color: #f1f8f1;
+    }
+
+    .btn-login {
+        background-color: var(--nw-dark-green);
+        color: white;
+        border: none;
+        padding: 15px;
+        font-weight: 700;
+        border-radius: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+    }
+
+    .btn-login:hover {
+        background-color: var(--nw-mid-green);
+        transform: translateY(-2px);
+        color: white;
+    }
+
+    .admin-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        background: rgba(176, 125, 98, 0.1); /* Couleur terre en version light */
+        color: #b07d62;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        margin-bottom: 15px;
+        text-transform: uppercase;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="text-center mb-0">Connexion Admin</h2>
+<div class="login-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
+
+                <div class="text-center mb-4">
+                    <div class="admin-badge">Espace Sécurisé</div>
                 </div>
-                <div class="card-body">
-                    {% if error %}
-                        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-                    {% endif %}
 
-                    <form method="post">
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" value="{{ last_username }}" name="email" id="email" class="form-control" required autofocus>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Mot de passe</label>
-                            <input type="password" name="password" id="password" class="form-control" required>
-                        </div>
+                <div class="card login-container">
+                    <div class="login-header">
+                        <h2>Administration</h2>
+                    </div>
 
-                        <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                    <div class="login-body">
+                        {% if error %}
+                            <div class="alert alert-danger border-0 shadow-sm mb-4">
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            </div>
+                        {% endif %}
 
-                        <button type="submit" class="btn btn-primary btn-lg w-100">Se connecter</button>
-                    </form>
+                        <form method="post">
+                            <div class="mb-4">
+                                <label for="email" class="form-label">Identifiant (Email)</label>
+                                <input type="email" value="{{ last_username }}" name="email" id="email" class="form-control" placeholder="admin@newworld.fr" required autofocus>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <input type="password" name="password" id="password" class="form-control" placeholder="••••••••" required>
+                            </div>
+
+                            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+
+                            <button type="submit" class="btn btn-login w-100 mt-2">
+                                Se connecter au dashboard
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('home') }}" class="text-muted text-decoration-none small">
+                        <i class="fas fa-arrow-left me-1"></i> Retour au site public
+                    </a>
                 </div>
             </div>
         </div>

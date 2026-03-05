@@ -1,46 +1,183 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Demande d'inscription - Producteur{% endblock %}
+{% block title %}Rejoindre l'Aventure - New World{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --form-bg: #ffffff;
+        --input-focus: #2d6a4f;
+    }
+
+    .registration-page {
+        background-color: #f8f5f2; /* Rappel du beige doux du layout */
+        min-height: 100vh;
+        padding: 60px 0;
+    }
+
+    .form-container {
+        background: var(--form-bg);
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        border: none;
+    }
+
+    .form-header {
+        background: var(--nw-dark-green);
+        color: white;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .form-header h2 {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        margin-bottom: 10px;
+    }
+
+    .form-body {
+        padding: 40px;
+    }
+
+    /* Style des labels et inputs */
+    label {
+        font-weight: 600;
+        color: var(--nw-dark-green);
+        margin-bottom: 8px;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .form-control {
+        border: 2px solid #eee;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: var(--input-focus);
+        box-shadow: none;
+        background-color: #f1f8f1;
+    }
+
+    .btn-submit {
+        background-color: #b07d62; /* Terre d'ombre pour le bouton */
+        color: white;
+        border: none;
+        padding: 15px;
+        font-weight: 700;
+        border-radius: 10px;
+        text-transform: uppercase;
+        transition: all 0.3s;
+        margin-top: 20px;
+    }
+
+    .btn-submit:hover {
+        background-color: #8e634d;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(176, 125, 98, 0.3);
+        color: white;
+    }
+
+    .form-helper {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 5px;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="text-center mb-0">Demande d'inscription Producteur</h2>
-                </div>
-                <div class="card-body">
-                    {{ form_start(form) }}
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(form.contact_name) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(form.email) }}
-                            </div>
-                        </div>
+<div class="registration-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
 
-                        {{ form_row(form.address) }}
+                <div class="card form-container">
+                    <div class="form-header">
+                        <h2>Parlez-nous de vous</h2>
+                        <p class="mb-0 opacity-75">Quelques minutes pour rejoindre notre réseau de distribution locale.</p>
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-6">
-                                {{ form_row(form.phone) }}
+                    <div class="form-body p-5">
+                        {{ form_start(form) }}
+
+                            <div class="mb-5">
+                                <h5 class="text-secondary fw-bold mb-4 border-bottom pb-2" style="letter-spacing: 1px;">
+                                    I. INFORMATIONS GÉNÉRALES
+                                </h5>
+
+                                <div class="row g-4">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ form_label(form.contact_name, "Nom du responsable", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
+                                            {{ form_widget(form.contact_name, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Ex: Jean Dupont'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ form_label(form.email, "Email professionnel", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
+                                            {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'contact@votre-ferme.fr'}}) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="form-group">
+                                            {{ form_label(form.address, "Adresse de l'exploitation", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
+                                            {{ form_widget(form.address, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'N°, rue, code postal et ville'}}) }}
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ form_label(form.phone, "Téléphone", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
+                                            {{ form_widget(form.phone, {'attr': {'class': 'form-control form-control-lg', 'placeholder': '06 .. .. .. ..'}}) }}
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            {{ form_label(form.siret, "Numéro SIRET", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
+                                            {{ form_widget(form.siret, {'attr': {'class': 'form-control form-control-lg', 'placeholder': '14 chiffres'}}) }}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                {{ form_row(form.siret) }}
+
+                            <div class="mb-5">
+                                <h5 class="text-secondary fw-bold mb-4 border-bottom pb-2" style="letter-spacing: 1px;">
+                                    II. VOTRE ACTIVITÉ
+                                </h5>
+
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        {{ form_label(form.activity, "Décrivez vos produits et votre méthode", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
+                                        {{ form_widget(form.activity, {'attr': {
+                                            'class': 'form-control form-control-lg',
+                                            'placeholder': 'Ex: Maraîchage biologique, élevage plein air, fruits de saison...',
+                                            'rows': '5'
+                                        }}) }}
+                                        <div class="form-text mt-2 italic text-muted">
+                                            <i class="fas fa-info-circle me-1"></i> Cette description sera lue par notre équipe lors de l'examen de votre dossier.
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-                        {{ form_row(form.activity) }}
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-submit px-5 py-3 shadow-sm w-100 fs-5 fw-bold">
+                                    SOUMETTRE MA CANDIDATURE
+                                </button>
+                            </div>
 
-                        <div class="mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg w-100">
-                                Envoyer ma demande
-                            </button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
+                        {{ form_end(form) }}
+                    </div>
+
+                <p class="text-center mt-4 text-muted small">
+                    En soumettant ce formulaire, vous acceptez d'être recontacté par l'équipe New World dans le cadre de votre démarche de partenariat.
+                </p>
             </div>
         </div>
     </div>
