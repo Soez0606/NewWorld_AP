@@ -1,56 +1,181 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mon Profil Producteur{% endblock %}
+{% block title %}Mon Profil - New World{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --nw-deep: #1b4332;
+        --nw-clay: #b07d62;
+        --nw-canvas: #faf9f6;
+    }
+
+    body { background-color: var(--nw-canvas); }
+
+    .profile-fluid {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+
+    .header-zone {
+        margin-bottom: 50px;
+    }
+
+    .back-link {
+        text-decoration: none;
+        color: var(--nw-clay);
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-flex;
+        align-items: center;
+        transition: 0.3s;
+    }
+
+    .back-link:hover { transform: translateX(-5px); }
+
+    /* Style du formulaire sans card */
+    .profile-section {
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    .section-info-badge {
+        background: #eef2f7;
+        color: #5d6d7e;
+        padding: 15px 20px;
+        border-radius: 12px;
+        font-size: 0.9rem;
+        margin-bottom: 30px;
+        border-left: 4px solid var(--nw-clay);
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: var(--nw-deep);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+
+    .form-control {
+        border: 2px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 12px 15px;
+        transition: all 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--nw-deep);
+        box-shadow: none;
+        background-color: #fcfdfc;
+    }
+
+    .btn-save {
+        background-color: var(--nw-deep);
+        color: white;
+        border: none;
+        padding: 15px 40px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+    }
+
+    .btn-save:hover {
+        background-color: var(--nw-clay);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(176, 125, 98, 0.3);
+    }
+
+    .footer-meta {
+        margin-top: 30px;
+        padding: 20px;
+        border-top: 1px solid #eee;
+        font-size: 0.85rem;
+        color: #999;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card shadow">
-                <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
-                    <h3 class="mb-0">👤 Mon Profil</h3>
-                    <a href="{{ path('producer_space_home') }}" class="btn btn-outline-light btn-sm">Retour</a>
-                </div>
-                <div class="card-body">
-                    
-                    {% for message in app.flashes('success') %}
-                        <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
+<div class="profile-fluid">
 
-                    <div class="alert alert-info">
-                        Certaines informations (Email, SIRET) ne sont pas modifiables directement. Contactez l'administration en cas de changement majeur.
+    <div class="header-zone">
+        <a href="{{ path('producer_space_home') }}" class="back-link">
+             ← Retour au tableau de bord
+        </a>
+        <h1 class="display-5 fw-bold mt-3" style="font-family: 'Playfair Display', serif; color: var(--nw-deep);">
+            Mon Identité Producteur
+        </h1>
+    </div>
+
+    <div class="profile-section">
+        {% for message in app.flashes('success') %}
+            <div class="alert alert-success border-0 shadow-sm mb-4">
+                ✨ {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="section-info-badge">
+            <i class='bx bx-info-circle me-2'></i>
+            L'email et le SIRET sont vérifiés par l'administration et ne peuvent être modifiés ici.
+        </div>
+
+        {{ form_start(form) }}
+            <div class="row g-4 mb-4">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.contact_name, "Nom du responsable") }}
+                        {{ form_widget(form.contact_name, {'attr': {'class': 'form-control'}}) }}
                     </div>
-
-                    {{ form_start(form) }}
-                        <div class="row mb-3">
-                            <div class="col-md-6">
-                                {{ form_row(form.contact_name) }}
-                            </div>
-                            <div class="col-md-6">
-                                {{ form_row(form.phone) }}
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_row(form.address) }}
-                        </div>
-
-                        <div class="mb-3">
-                            {{ form_row(form.activity) }}
-                        </div>
-
-                        <hr>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-success btn-lg">💾 Enregistrer les modifications</button>
-                        </div>
-                    {{ form_end(form) }}
-                    
                 </div>
-                <div class="card-footer text-muted text-center">
-                    Compte lié à l'email : <strong>{{ app.user.email }}</strong> | SIRET : {{ producer.siret }}
+                <div class="col-md-6">
+                    <div class="form-group">
+                        {{ form_label(form.phone, "Téléphone de contact") }}
+                        {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="form-group">
+                    {{ form_label(form.address, "Adresse de l'exploitation") }}
+                    {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <div class="form-group">
+                    {{ form_label(form.activity, "Description de votre activité") }}
+                    {{ form_widget(form.activity, {'attr': {'class': 'form-control', 'rows': '5'}}) }}
+                </div>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn btn-save">
+                    Enregistrer les modifications
+                </button>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="footer-meta text-center">
+            <div class="row">
+                <div class="col-sm-6 mb-2 mb-sm-0">
+                    <span class="text-uppercase fw-bold">Email :</span> {{ app.user.email }}
+                </div>
+                <div class="col-sm-6">
+                    <span class="text-uppercase fw-bold">SIRET :</span> {{ producer.siret }}
                 </div>
             </div>
         </div>
     </div>
+
 </div>
 {% endblock %}

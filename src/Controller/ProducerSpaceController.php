@@ -75,10 +75,10 @@ class ProducerSpaceController extends AbstractController
         $user = $this->getUser();
 
         // 1. SÉCURITÉ : Vérifier si le producteur a déjà un contrat actif ou en attente
-        $existingContracts = $em->getRepository(Contracts::class)->findBy(['user_id' => $user->getId()]);
+       $existingContracts = $em->getRepository(Contracts::class)->findBy(['user_id' => $user->getId()]);
         foreach ($existingContracts as $c) {
-            if (in_array($c->getStatus(), ['En cours', 'Demande de résiliation', 'En attente de validation'])) {
-                $this->addFlash('warning', 'Action refusée : Vous avez déjà un contrat actif ou une demande en cours.');
+            if ($c->getStatus() === 'En attente de validation') {
+                $this->addFlash('warning', 'Patience : Vous avez déjà une demande de contrat en cours d\'étude par la direction.');
                 return $this->redirectToRoute('producer_space_contracts');
             }
         }
