@@ -10,6 +10,7 @@ use App\Entity\Logs;
 use App\Entity\Roles;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
+use App\Controller\Admin\ContractsCrudController; // <--- AJOUTER CETTE LIGNE
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 use Symfony\Component\HttpFoundation\Response;
@@ -110,7 +111,9 @@ class DashboardController extends AbstractDashboardController
                 ->setController(TerminationRequestCrudController::class) // <--- On pointe vers le contrôleur spécial
                 ->setBadge($terminationCount, $terminationCount > 0 ? 'danger' : 'secondary'); 
                 
-            yield MenuItem::linkToCrud('Contrats', 'fa fa-file-signature', Contracts::class);
+            //yield MenuItem::linkToCrud('Contrats', 'fa fa-file-signature', Contracts::class);
+            yield MenuItem::linkToCrud('Tous les Contrats', 'fa fa-file-signature', Contracts::class)
+                ->setController(ContractsCrudController::class);
             yield MenuItem::linkToCrud('Archives', 'fa fa-archive', Archives::class);
         }
 
