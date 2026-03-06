@@ -123,64 +123,59 @@
             <p class="mt-3">Aucun contrat n'est rattaché à votre compte pour le moment.</p>
         </div>
     {% else %}
-
-        <div class="contracts-list">
-            {% for contract in contracts %}
-                <div class="contract-row">
-                    <div class="row align-items-center text-center text-md-start">
-
-                        <div class="col-md-2 mb-3 mb-md-0">
-                            <span class="contract-label">Référence</span>
-                            <span class="contract-data">#{{ contract.id }}</span>
-                        </div>
-
-                        <div class="col-md-2 mb-3 mb-md-0">
-                            <span class="contract-label">Signé le</span>
-                            <span class="contract-data">{{ contract.signatureDate|date('d/m/Y') }}</span>
-                        </div>
-
-                        <div class="col-md-3 mb-3 mb-md-0">
-                            <span class="contract-label">État du contrat</span>
-                            {% if contract.status == 'En cours' %}
-                                <span class="status-badge status-active">Actif</span>
-                            {% elseif contract.status == 'Demande de résiliation' %}
-                                <span class="status-badge status-pending">En cours de résiliation</span>
-                            {% elseif contract.status == 'Résilié' %}
-                                <span class="status-badge status-closed">Terminé</span>
-                            {% else %}
-                                <span class="status-badge bg-light">{{ contract.status }}</span>
-                            {% endif %}
-                        </div>
-
-                        <div class="col-md-2 mb-3 mb-md-0">
-                            <span class="contract-label">Fin prévue</span>
-                            <span class="contract-data">
-                                {% if contract.expirationDate %}
-                                    {{ contract.expirationDate|date('d/m/Y') }}
-                                {% else %}
-                                    Tâches fixes
-                                {% endif %}
-                            </span>
-                        </div>
-
-                        <div class="col-md-3 text-md-end">
-                            {% if contract.status == 'En cours' %}
-                                <a href="{{ path('producer_request_termination', {id: contract.id}) }}"
-                                   class="btn-terminate text-decoration-none d-inline-block"
-                                   onclick="return confirm('Souhaitez-vous vraiment engager la procédure de résiliation ? (Préavis de {{ contract.noticeMonths }} mois)')">
-                                    Résilier
-                                </a>
-                            {% else %}
-                                <span class="text-muted small fw-bold">Aucune action</span>
-                            {% endif %}
-                        </div>
-
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Numéro</th>
+                    <th>Date de signature</th>
+                    <th>Statut</th>
+                    <th>Préavis (mois)</th>
+                    <th>Date de fin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for contract in contracts %}
+                <tr>
+                    <td>#{{ contract.id }}</td>
+                    <td>{{ contract.signatureDate|date('d/m/Y') }}</td>
+                    <td>
+                        {% if contract.status == 'En cours' %}
+                            <span class="badge bg-success">En cours</span>
+                        {% elseif contract.status == 'Demande de résiliation' %}
+                            <span class="badge bg-warning text-dark">Demande envoyée</span>
+                        {% elseif contract.status == 'Résilié' %}
+                            <span class="badge bg-danger">Résilié</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ contract.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ contract.noticeMonths }} mois</td>
+                    <td>
+                        {% if contract.expirationDate %}
+                            {{ contract.expirationDate|date('d/m/Y') }}
+                        {% else %}
+                            <em>Indéterminée</em>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if contract.status == 'En cours' %}
+                            <a href="{{ path('producer_request_termination', {id: contract.id}) }}"
+                               class="btn btn-sm btn-outline-danger"
+                               onclick="return confirm('Êtes-vous sûr de vouloir résilier ? Un préavis de 2 mois sera appliqué.')">
+                                Demander résiliation
+                            </a>
+                        {% else %}
+                            <button class="btn btn-sm btn-secondary" disabled>Action indisponible</button>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% endif %}
 
+    <button class="btn btn-outline-danger mt-3" onclick="alert('Votre demande de résiliation a été envoyée à l\'administration (Simulation).')">
+        Demander la résiliation (Préavis 2 mois)
+    </button>
 </div>
 {% endblock %}

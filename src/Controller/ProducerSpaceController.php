@@ -67,7 +67,38 @@ class ProducerSpaceController extends AbstractController
         ]);
     }
 
-    // --- AJOUTER CETTE NOUVELLE MÉTHODE ---
+    // --- Demande de nouveau contrat ---
+    #[Route('/nouveau-contrat', name: 'producer_request_new_contract')]
+    public function requestNewContract(EntityManagerInterface $em): Response
+    {
+        /** @var \App\Entity\Users $user */
+        $user = $this->getUser();
+
+        // 1. SÉCURITÉ : Vérifier si le producteur a déjà un contrat actif ou en attente
+        $existingContracts = $em->getRepository(Contracts::class)->findBy(['user_id' => $user->getId()]);
+        foreach ($existingContracts as $c) {
+            if (in_array($c->getStatus(), ['En cours', 'Demande de résiliation', 'En attente de validation'])) {
+                $this->addFlash('warning', 'Action refusée : Vous avez déjà un contrat actif ou une demande en cours.');
+                return $this->redirectToRoute('producer_space_contracts');
+            }
+        }
+
+        // 2. Création du nouveau contrat "brouillon"
+        $contract = new Contracts();
+        $contract->setUserId($user->getId());
+        $contract->setSignatureDate(new \DateTime()); // Date de la demande
+        $contract->setNoticeMonths(6); // Toujours 6 mois selon le cahier des charges
+        $contract->setStatus('En attente de validation');
+
+        $em->persist($contract);
+        $em->flush();
+
+        $this->addFlash('success', 'Votre demande de nouveau contrat a bien été transmise à la direction.');
+
+        return $this->redirectToRoute('producer_space_contracts');
+    }
+
+    // --- Demande de resiliation ---
     #[Route('/contrat/{id}/demande-resiliation', name: 'producer_request_termination')]
     public function requestTermination(int $id, EntityManagerInterface $em): Response
     {

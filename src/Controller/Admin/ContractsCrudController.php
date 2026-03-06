@@ -48,9 +48,20 @@ class ContractsCrudController extends AbstractCrudController
                 return $entity->getStatus() !== 'Résilié';
             });
 
+            // NOUVELLE ACTION : Valider un nouveau contrat
+        $validateAction = Action::new('validateContract', 'Valider le contrat')
+            ->linkToCrudAction('validateNewContract')
+            ->addCssClass('btn btn-success')
+            ->setIcon('fa fa-check')
+            ->displayIf(static function ($entity) {
+                // S'affiche uniquement si le contrat est en attente
+                return $entity->getStatus() === 'En attente de validation';
+            });
+
         return $actions
             ->add(Crud::PAGE_INDEX, $terminateAction)
             ->add(Crud::PAGE_DETAIL, $terminateAction)
+            ->add(Crud::PAGE_INDEX, $validateAction) // validation de la nouvelle demane de contrat
             // Désactiver la suppression et l'ajout pour garder l'intégrité
             ->disable(Action::DELETE, Action::NEW);
     }
@@ -86,6 +97,32 @@ class ContractsCrudController extends AbstractCrudController
         $em->flush();
 
         $this->addFlash('success', 'Le contrat a été résilié. Fin effective le ' . $endDate->format('d/m/Y'));
+
+        return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+    }
+
+    public function validateNewContract(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator): Response
+    {
+        /** @var Contracts $contract */
+        $contract = $context->getEntity()->getInstance();
+
+        if (!$this->isGranted('ROLE_PDG') && !$this->isGranted('ROLE_DIRECTOR')) {
+            $this->addFlash('danger', 'Vous n\'avez pas les droits pour signer un contrat.');
+            return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
+        }
+
+        // On active le contrat : Date du jour + calcul de la fin à 6 mois
+        $startDate = new \DateTime();
+        $endDate = clone $startDate;
+        $endDate->modify('+6 months');
+
+        $contract->setSignatureDate($startDate);
+        $contract->setExpirationDate($endDate);
+        $contract->setStatus('En cours');
+
+        $em->flush();
+
+        $this->addFlash('success', 'Le nouveau contrat a été activé ! Il prendra fin le ' . $endDate->format('d/m/Y'));
 
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
