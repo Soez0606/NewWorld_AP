@@ -2,45 +2,158 @@
 
 {% block title %}Demande envoyée - New World{% endblock %}
 
+{% block stylesheets %}
+<style>
+    .success-page {
+        background-color: #f8f5f2;
+        min-height: 90vh;
+        padding: 60px 0;
+    }
+
+    .success-card {
+        background: white;
+        border-radius: 20px;
+        border: none;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.05);
+        overflow: hidden;
+    }
+
+    .success-header {
+        background: var(--nw-dark-green);
+        color: white;
+        padding: 50px;
+        text-align: center;
+    }
+
+    .success-icon {
+        width: 80px;
+        height: 80px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 40px;
+    }
+
+    .recap-section {
+        padding: 40px;
+    }
+
+    .info-label {
+        color: var(--nw-dark-green);
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .info-value {
+        color: #2d3436;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .next-steps-card {
+        background: var(--nw-light-green); /* Couleur définie dans le layout */
+        border-left: 5px solid var(--nw-mid-green);
+        padding: 25px;
+        border-radius: 10px;
+        margin-top: 30px;
+    }
+
+    .btn-return {
+        background-color: var(--nw-earth);
+        color: white;
+        border-radius: 50px;
+        padding: 12px 30px;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .btn-return:hover {
+        background-color: #8e634d;
+        color: white;
+        transform: translateY(-2px);
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="container mt-4">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="alert alert-success">
-                <h4 class="alert-heading">Demande envoyée avec succès !</h4>
-                <p><strong>Référence de votre demande : #{{ producer.id }}</strong></p>
-                <p>Votre demande d'inscription a été enregistrée et sera examinée par notre équipe sous peu.</p>
-                <hr>
-                <p class="mb-0"><strong>Prochaines étapes :</strong></p>
-                <ul>
-                    <li>Notre équipe va examiner votre dossier</li>
-                    <li>Vous recevrez un email à l'adresse <strong>{{ producer.email }}</strong> une fois votre demande traitée</li>
-                    <li>Si votre demande est pré-approuvée, un audit en présentiel sera programmé</li>
-                </ul>
-            </div>
+<div class="success-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
 
-            <div class="card mt-4">
-                <div class="card-header">
-                    <h5>Récapitulatif de votre demande</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Nom du contact :</strong> {{ producer.contactName }}</p>
-                    <p><strong>Email :</strong> {{ producer.email }}</p>
-                    <p><strong>Téléphone :</strong> {{ producer.phone }}</p>
-                    <p><strong>SIRET :</strong> {{ producer.siret }}</p>
-                    <p><strong>Adresse :</strong> {{ producer.address }}</p>
-                    <p><strong>Activité :</strong> {{ producer.activity }}</p>
-                    <p><strong>Date de demande :</strong> {{ producer.registrationDate|date('d/m/Y à H:i') }}</p>
-                </div>
-            </div>
+                <div class="card success-card">
+                    <div class="success-header">
+                        <div class="success-icon">✓</div>
+                        <h2 class="h1 fw-bold mb-2" style="font-family: 'Playfair Display', serif;">Merci pour votre engagement</h2>
+                        <p class="opacity-75 lead mb-0">Votre demande d'inscription #{{ producer.id }} est bien enregistrée.</p>
+                    </div>
 
-            <div class="text-center mt-4">
-                <a href="{{ path('home') }}" class="btn btn-outline-secondary">
-                    ← Retour à l'accueil
-                </a>
-                <a href="{{ path('producer_registration') }}" class="btn btn-primary">
-                    Faire une autre demande
-                </a>
+                    <div class="recap-section">
+                        <div class="row">
+                            <div class="col-md-7">
+                                <h4 class="mb-4 text-dark fw-bold">Récapitulatif de votre dossier</h4>
+
+                                <div class="row">
+                                    <div class="col-6">
+                                        <p class="info-label mb-1">Responsable</p>
+                                        <p class="info-value">{{ producer.contactName }}</p>
+                                    </div>
+                                    <div class="col-6">
+                                        <p class="info-label mb-1">SIRET</p>
+                                        <p class="info-value">{{ producer.siret }}</p>
+                                    </div>
+                                </div>
+
+                                <p class="info-label mb-1">Email de contact</p>
+                                <p class="info-value">{{ producer.email }}</p>
+
+                                <p class="info-label mb-1">Localisation</p>
+                                <p class="info-value">{{ producer.address }}</p>
+
+                                <p class="info-label mb-1">Activité décrite</p>
+                                <p class="info-value fst-italic">{{ producer.activity }}</p>
+                            </div>
+
+                            <div class="col-md-5">
+                                <div class="next-steps-card">
+                                    <h5 class="fw-bold mb-3" style="color: var(--nw-dark-green);">Et maintenant ?</h5>
+                                    <ul class="list-unstyled mb-0">
+                                        <li class="mb-3 d-flex align-items-start">
+                                            <span class="me-2 text-success">●</span>
+                                            <small>Analyse de votre dossier par nos experts locaux.</small>
+                                        </li>
+                                        <li class="mb-3 d-flex align-items-start">
+                                            <span class="me-2 text-success">●</span>
+                                            <small>Réception d'un email de confirmation sous 48h à <strong>{{ producer.email }}</strong>.</small>
+                                        </li>
+                                        <li class="d-flex align-items-start">
+                                            <span class="me-2 text-success">●</span>
+                                            <small>Organisation d'une visite d'audit sur votre exploitation.</small>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-5">
+                            <a href="{{ path('home') }}" class="btn btn-return px-5 shadow-sm">
+                                Retourner à l'accueil
+                            </a>
+                            <div class="mt-3">
+                                <a href="{{ path('producer_registration') }}" class="text-muted small text-decoration-none">
+                                    Une autre demande ? Cliquez ici
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
