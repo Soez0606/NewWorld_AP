@@ -16,7 +16,7 @@
                     <th>Numéro</th>
                     <th>Date de signature</th>
                     <th>Statut</th>
-                    <th>Préavis (mois)</th>
+                    <th>Préavis (2 mois)</th>
                     <th>Date de fin</th>
                 </tr>
             </thead>
@@ -28,7 +28,7 @@
                             {% elseif contract.status == 'Demande de résiliation' %}
                                 <span class="badge bg-warning text-dark">Demande envoyée</span>
                             {% elseif contract.status == 'En attente de validation' %}
-                                <span class="badge bg-info text-dark">En attente direction</span>
+                                <span class="badge bg-info text-dark">En attente de validation</span>
                             {% elseif contract.status == 'Résilié' %}
                                 <span class="badge bg-danger">Résilié</span>
                             {% else %}
