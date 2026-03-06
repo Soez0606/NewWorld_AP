@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20251128134530 extends AbstractMigration
+final class Version20260306124011 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -25,7 +25,8 @@ final class Version20251128134530 extends AbstractMigration
         $this->addSql('CREATE TABLE logs (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, "action" CLOB NOT NULL, action_date DATETIME NOT NULL)');
         $this->addSql('CREATE TABLE producers_info (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, user_id INTEGER NOT NULL, contact_name VARCHAR(100) NOT NULL, email VARCHAR(150) NOT NULL, address VARCHAR(255) NOT NULL, phone VARCHAR(50) NOT NULL, siret VARCHAR(14) NOT NULL, activity CLOB NOT NULL, registration_date DATETIME NOT NULL, validation_audit_date DATETIME DEFAULT NULL, termination_date DATETIME DEFAULT NULL, archived BOOLEAN DEFAULT NULL, status_audit VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE TABLE roles (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(100) NOT NULL)');
-        $this->addSql('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(100) NOT NULL, email VARCHAR(150) NOT NULL, password VARCHAR(255) NOT NULL, role_id INTEGER NOT NULL)');
+        $this->addSql('CREATE TABLE users (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(100) NOT NULL, email VARCHAR(150) NOT NULL, password VARCHAR(255) DEFAULT NULL, role_id INTEGER NOT NULL, is_active BOOLEAN NOT NULL, has_password BOOLEAN NOT NULL)');
+        $this->addSql('CREATE UNIQUE INDEX UNIQ_1483A5E9E7927C74 ON users (email)');
         $this->addSql('CREATE TABLE messenger_messages (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, body CLOB NOT NULL, headers CLOB NOT NULL, queue_name VARCHAR(190) NOT NULL, created_at DATETIME NOT NULL, available_at DATETIME NOT NULL, delivered_at DATETIME DEFAULT NULL)');
         $this->addSql('CREATE INDEX IDX_75EA56E0FB7336F0 ON messenger_messages (queue_name)');
         $this->addSql('CREATE INDEX IDX_75EA56E0E3BD61CE ON messenger_messages (available_at)');

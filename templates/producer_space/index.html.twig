@@ -1,32 +1,177 @@
-{# templates/producer_space/index.html.twig #}
 {% extends 'base.html.twig' %}
 
+{% block title %}Mon Espace - New World{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --nw-deep: #1b4332;
+        --nw-clay: #b07d62;
+        --nw-canvas: #faf9f6; /* Beige encore plus doux pour le fond */
+    }
+
+    body { background-color: var(--nw-canvas); }
+
+    .dashboard-fluid {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 80px 20px;
+    }
+
+    .dashboard-header {
+        text-align: center;
+        margin-bottom: 80px;
+    }
+
+    .dashboard-header h1 {
+        font-family: 'Playfair Display', serif;
+        font-size: 3.5rem;
+        color: var(--nw-deep);
+        margin-bottom: 10px;
+    }
+
+    .content-section {
+        padding: 60px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.06); /* Ligne plus subtile */
+        transition: all 0.3s ease;
+    }
+
+    .content-section:last-child { border-bottom: none; }
+
+    .section-label {
+        text-transform: uppercase;
+        letter-spacing: 3px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        color: var(--nw-clay);
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    .section-title {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.2rem;
+        color: var(--nw-deep);
+        margin-bottom: 25px;
+    }
+
+    .section-text {
+        font-size: 1.1rem;
+        color: #555;
+        line-height: 1.8;
+        max-width: 600px;
+    }
+
+    .action-btn {
+        display: inline-flex;
+        align-items: center;
+        margin-top: 30px;
+        padding: 12px 35px;
+        background-color: var(--nw-deep);
+        color: white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+        background-color: var(--nw-clay);
+        transform: translateX(10px);
+        color: white;
+    }
+
+    /*--- Nouveau Style des Icônes ---*/
+    .icon-container {
+        color: var(--nw-deep);
+        font-size: 7rem; /* Plus grand pour l'effet fantôme */
+        opacity: 0.08; /* Encore plus subtil */
+        transition: all 0.4s ease;
+    }
+
+    /* Animation subtile au survol de la section entière */
+    .content-section:hover .icon-container {
+        opacity: 0.15;
+        transform: scale(1.05);
+    }
+
+    /*--- Pied de page ---*/
+    .dashboard-footer {
+        margin-top: 60px;
+        text-align: center;
+        padding-top: 20px;
+    }
+
+    .btn-exit {
+        color: #888;
+        text-decoration: none;
+        font-size: 0.8rem;
+        font-weight: 700;
+        letter-spacing: 2px;
+        transition: all 0.3s;
+    }
+
+    .btn-exit:hover {
+        color: #e74c3c;
+        letter-spacing: 3px;
+    }
+</style>
+{% endblock %}
+
 {% block body %}
-<div class="container mt-5">
-    <h1>Bienvenue dans votre espace producteur</h1>
-    <div class="row mt-4">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Mon Profil</h5>
-                    <p class="card-text">Voir et modifier mes informations.</p>
-                    <a href="{{ path('producer_space_profile') }}" class="btn btn-primary">Gérer mon profil</a>
+<div class="dashboard-fluid">
+
+    <header class="dashboard-header">
+        <h1>Bonjour, {{ app.user.userIdentifier }}</h1>
+        <p class="text-muted lead">Espace Personnel • New World</p>
+    </header>
+
+    <main>
+        <section class="content-section">
+            <div class="row align-items-center">
+                <div class="col-md-7">
+                    <span class="section-label">Vos Informations</span>
+                    <h2 class="section-title">Identité & Exploitation</h2>
+                    <p class="section-text">
+                        Mettez à jour vos coordonnées, changez votre mot de passe, et gérez la description qui présente votre ferme aux consommateurs.
+                    </p>
+                    <a href="{{ path('producer_space_profile') }}" class="action-btn">
+                        Modifier le profil &nbsp; →
+                    </a>
+                </div>
+                <div class="col-md-5 d-none d-md-block text-end">
+                    <div class="icon-container">
+                        <i class='bx bx-user-circle'></i>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Mes Contrats</h5>
-                    <p class="card-text">Consulter mes contrats en cours.</p>
-                    <a href="{{ path('producer_space_contracts') }}" class="btn btn-primary">Voir mes contrats</a>
+        </section>
+
+        <section class="content-section">
+            <div class="row align-items-center">
+                <div class="col-md-5 d-none d-md-block">
+                    <div class="icon-container">
+                        <i class='bx bx-file-blank'></i>
+                    </div>
+                </div>
+                <div class="col-md-7">
+                    <span class="section-label">Juridique</span>
+                    <h2 class="section-title">Documents & Contrats</h2>
+                    <p class="section-text">
+                        Consultez l'historique de vos signatures, vos volumes d'engagement et téléchargez vos documents officiels.
+                    </p>
+                    <a href="{{ path('producer_space_contracts') }}" class="action-btn">
+                        Consulter les documents &nbsp; →
+                    </a>
                 </div>
             </div>
-        </div>
-    </div>
-    
-    <div class="mt-3">
-        <a href="{{ path('app_logout') }}" class="btn btn-danger">Se déconnecter</a>
-    </div>
+        </section>
+    </main>
+
+    <footer class="dashboard-footer">
+        <a href="{{ path('app_logout') }}" class="btn-exit text-uppercase">
+            Fermer ma session
+        </a>
+    </footer>
 </div>
 {% endblock %}

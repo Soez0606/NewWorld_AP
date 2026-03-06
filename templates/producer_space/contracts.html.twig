@@ -1,68 +1,186 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes Contrats{% endblock %}
+{% block title %}Mes Engagements - New World{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --nw-deep: #1b4332;
+        --nw-clay: #b07d62;
+        --nw-canvas: #faf9f6;
+    }
+
+    body { background-color: var(--nw-canvas); }
+
+    .contracts-fluid {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+
+    .header-zone {
+        margin-bottom: 50px;
+    }
+
+    .back-link {
+        text-decoration: none;
+        color: var(--nw-clay);
+        font-weight: 700;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        display: inline-flex;
+        align-items: center;
+        transition: all 0.3s;
+    }
+
+    .back-link:hover { transform: translateX(-5px); }
+
+    /* Structure de la liste sans bordures de tableau */
+    .contract-row {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .contract-row:hover {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.04);
+        transform: scale(1.01);
+    }
+
+    .contract-label {
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        color: #999;
+        font-weight: 800;
+        letter-spacing: 1px;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    .contract-data {
+        font-weight: 600;
+        color: var(--nw-deep);
+        font-size: 1.1rem;
+    }
+
+    /* Status personnalisés */
+    .status-badge {
+        padding: 6px 15px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-active { background: #e8f5e9; color: #2e7d32; }
+    .status-pending { background: #fff3e0; color: #ef6c00; }
+    .status-closed { background: #ffebee; color: #c62828; }
+
+    .btn-terminate {
+        border: 2px solid #e74c3c;
+        color: #e74c3c;
+        background: transparent;
+        padding: 8px 20px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        transition: all 0.3s;
+    }
+
+    .btn-terminate:hover {
+        background: #e74c3c;
+        color: white;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 100px 0;
+        color: #999;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h2>📜 Mes Contrats</h2>
-    <a href="{{ path('producer_space_home') }}" class="btn btn-secondary mb-3">Retour</a>
+<div class="contracts-fluid">
+
+    <div class="header-zone">
+        <a href="{{ path('producer_space_home') }}" class="back-link">
+             ← Retour au tableau de bord
+        </a>
+        <h1 class="display-4 fw-bold mt-3" style="font-family: 'Playfair Display', serif; color: var(--nw-deep);">
+            Mes Engagements
+        </h1>
+    </div>
 
     {% if contracts is empty %}
-        <div class="alert alert-warning">Aucun contrat trouvé.</div>
+        <div class="empty-state">
+            <i class='bx bx-file-blank' style="font-size: 4rem; opacity: 0.3;"></i>
+            <p class="mt-3">Aucun contrat n'est rattaché à votre compte pour le moment.</p>
+        </div>
     {% else %}
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Numéro</th>
-                    <th>Date de signature</th>
-                    <th>Statut</th>
-                    <th>Préavis (mois)</th>
-                    <th>Date de fin</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for contract in contracts %}
-                <tr>
-                    <td>#{{ contract.id }}</td>
-                    <td>{{ contract.signatureDate|date('d/m/Y') }}</td>
-                    <td>
-                        {% if contract.status == 'En cours' %}
-                            <span class="badge bg-success">En cours</span>
-                        {% elseif contract.status == 'Demande de résiliation' %}
-                            <span class="badge bg-warning text-dark">Demande envoyée</span>
-                        {% elseif contract.status == 'Résilié' %}
-                            <span class="badge bg-danger">Résilié</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ contract.status }}</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ contract.noticeMonths }} mois</td>
-                    <td>
-                        {% if contract.expirationDate %}
-                            {{ contract.expirationDate|date('d/m/Y') }}
-                        {% else %}
-                            <em>Indéterminée</em>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if contract.status == 'En cours' %}
-                            <a href="{{ path('producer_request_termination', {id: contract.id}) }}" 
-                               class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Êtes-vous sûr de vouloir résilier ? Un préavis de 2 mois sera appliqué.')">
-                                Demander résiliation
-                            </a>
-                        {% else %}
-                            <button class="btn btn-sm btn-secondary" disabled>Action indisponible</button>
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+
+        <div class="contracts-list">
+            {% for contract in contracts %}
+                <div class="contract-row">
+                    <div class="row align-items-center text-center text-md-start">
+
+                        <div class="col-md-2 mb-3 mb-md-0">
+                            <span class="contract-label">Référence</span>
+                            <span class="contract-data">#{{ contract.id }}</span>
+                        </div>
+
+                        <div class="col-md-2 mb-3 mb-md-0">
+                            <span class="contract-label">Signé le</span>
+                            <span class="contract-data">{{ contract.signatureDate|date('d/m/Y') }}</span>
+                        </div>
+
+                        <div class="col-md-3 mb-3 mb-md-0">
+                            <span class="contract-label">État du contrat</span>
+                            {% if contract.status == 'En cours' %}
+                                <span class="status-badge status-active">Actif</span>
+                            {% elseif contract.status == 'Demande de résiliation' %}
+                                <span class="status-badge status-pending">En cours de résiliation</span>
+                            {% elseif contract.status == 'Résilié' %}
+                                <span class="status-badge status-closed">Terminé</span>
+                            {% else %}
+                                <span class="status-badge bg-light">{{ contract.status }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="col-md-2 mb-3 mb-md-0">
+                            <span class="contract-label">Fin prévue</span>
+                            <span class="contract-data">
+                                {% if contract.expirationDate %}
+                                    {{ contract.expirationDate|date('d/m/Y') }}
+                                {% else %}
+                                    Tâches fixes
+                                {% endif %}
+                            </span>
+                        </div>
+
+                        <div class="col-md-3 text-md-end">
+                            {% if contract.status == 'En cours' %}
+                                <a href="{{ path('producer_request_termination', {id: contract.id}) }}"
+                                   class="btn-terminate text-decoration-none d-inline-block"
+                                   onclick="return confirm('Souhaitez-vous vraiment engager la procédure de résiliation ? (Préavis de {{ contract.noticeMonths }} mois)')">
+                                    Résilier
+                                </a>
+                            {% else %}
+                                <span class="text-muted small fw-bold">Aucune action</span>
+                            {% endif %}
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
     {% endif %}
-    
-    <button class="btn btn-outline-danger mt-3" onclick="alert('Votre demande de résiliation a été envoyée à l\'administration (Simulation).')">
-        Demander la résiliation (Préavis 2 mois)
-    </button>
+
 </div>
 {% endblock %}

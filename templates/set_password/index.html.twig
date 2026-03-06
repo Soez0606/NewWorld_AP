@@ -1,40 +1,167 @@
-{# templates/set_password/index.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Définir votre mot de passe{% endblock %}
+{% block title %}Initialisation de votre compte - New World{% endblock %}
+
+{% block stylesheets %}
+<style>
+    :root {
+        --nw-deep: #1b4332;
+        --nw-mid-green: #2d6a4f;
+        --nw-clay: #b07d62;
+        --nw-canvas: #f8f5f2;
+    }
+
+    .setup-page {
+        background-color: var(--nw-canvas);
+        min-height: 90vh;
+        display: flex;
+        align-items: center;
+        padding: 40px 0;
+    }
+
+    .setup-container {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.05);
+        padding: 50px;
+        border: none;
+        transition: transform 0.3s ease;
+    }
+
+    /* Petit effet de lévitation sur le bloc entier au survol */
+    .setup-container:hover {
+        transform: translateY(-5px);
+    }
+
+    .setup-header {
+        text-align: center;
+        margin-bottom: 40px;
+    }
+
+    .setup-header h1 {
+        font-family: 'Playfair Display', serif;
+        color: var(--nw-deep);
+        font-weight: 700;
+        margin-bottom: 15px;
+    }
+
+    .welcome-badge {
+        display: inline-block;
+        padding: 6px 18px;
+        background: rgba(45, 106, 79, 0.1);
+        color: var(--nw-deep);
+        border-radius: 50px;
+        font-weight: 800;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        margin-bottom: 20px;
+    }
+
+    .form-label-custom {
+        font-weight: 700;
+        color: var(--nw-deep);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+        display: block;
+    }
+
+    /* Le style de l'input avec le focus vert */
+    .form-control-custom {
+        border: 2px solid #eee;
+        border-radius: 12px;
+        padding: 14px 18px;
+        transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    }
+
+    .form-control-custom:focus {
+        border-color: var(--nw-mid-green);
+        box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.1);
+        background-color: #f1f8f1; /* Teinte très légèrement verte au focus */
+        outline: none;
+    }
+
+    /* Le bouton avec le hover vert identique au dashboard */
+    .btn-setup {
+        background-color: var(--nw-deep);
+        color: white;
+        border: none;
+        padding: 16px;
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s;
+        margin-top: 20px;
+    }
+
+    .btn-setup:hover {
+        background-color: var(--nw-mid-green);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(27, 67, 50, 0.2);
+        color: white;
+    }
+
+    .password-hint {
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        margin-top: 10px;
+        padding-left: 5px;
+    }
+</style>
+{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header bg-warning">
-                    <h3 class="mb-0">Définir votre mot de passe</h3>
-                </div>
-                <div class="card-body">
-                    <p class="alert alert-info">
-                        <strong>Première connexion !</strong><br>
-                        Bienvenue {{ user.name }}. Veuillez définir votre mot de passe.
-                    </p>
-                    
+<div class="setup-page">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-8">
+
+                <div class="setup-container">
+                    <div class="setup-header">
+                        <span class="welcome-badge">Première Connexion</span>
+                        <h1>Bienvenue, {{ user.name }}</h1>
+                        <p class="text-muted">Pour activer votre accès, veuillez définir le mot de passe de votre compte.</p>
+                    </div>
+
                     {% for flash in app.flashes('error') %}
-                        <div class="alert alert-danger">{{ flash }}</div>
+                        <div class="alert alert-danger border-0 shadow-sm mb-4" style="border-radius: 12px;">
+                             {{ flash }}
+                        </div>
                     {% endfor %}
-                    
+
                     <form method="post">
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Nouveau mot de passe</label>
-                            <input type="password" id="password" name="password" class="form-control" required>
+                        <div class="mb-4">
+                            <label for="password" class="form-label-custom">Nouveau mot de passe</label>
+                            <input type="password" id="password" name="password"
+                                   class="form-control-custom w-100"
+                                   placeholder="Votre mot de passe secret" required autofocus>
                         </div>
-                        
-                        <div class="mb-3">
-                            <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
-                            <input type="password" id="confirm_password" name="confirm_password" class="form-control" required>
+
+                        <div class="mb-4">
+                            <label for="confirm_password" class="form-label-custom">Confirmer la saisie</label>
+                            <input type="password" id="confirm_password" name="confirm_password"
+                                   class="form-control-custom w-100"
+                                   placeholder="Répétez votre mot de passe" required>
+                            <p class="password-hint">
+                                <i class='bx bx-check-shield me-1'></i> Choisissez un mot de passe robuste et facile à retenir.
+                            </p>
                         </div>
-                        
-                        <button type="submit" class="btn btn-primary w-100">Définir mon mot de passe</button>
+
+                        <button type="submit" class="btn btn-setup w-100">
+                            Activer mon compte &nbsp; →
+                        </button>
                     </form>
                 </div>
+
+                <div class="text-center mt-4">
+                    <a href="{{ path('app_logout') }}" class="text-muted small text-decoration-none">
+                        Annuler et se déconnecter
+                    </a>
+                </div>
+
             </div>
         </div>
     </div>
