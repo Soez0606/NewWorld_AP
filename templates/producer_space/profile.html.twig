@@ -134,12 +134,15 @@
                     <div class="form-group">
                         {{ form_label(form.contact_name, "Nom du responsable") }}
                         {{ form_widget(form.contact_name, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.contact_name) }}</div>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         {{ form_label(form.phone, "Téléphone de contact") }}
                         {{ form_widget(form.phone, {'attr': {'class': 'form-control'}}) }}
+                        <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.phone) }}</div>
+
                     </div>
                 </div>
             </div>
@@ -148,6 +151,7 @@
                 <div class="form-group">
                     {{ form_label(form.address, "Adresse de l'exploitation") }}
                     {{ form_widget(form.address, {'attr': {'class': 'form-control'}}) }}
+                    <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.address) }}</div>
                 </div>
             </div>
 
@@ -155,6 +159,7 @@
                 <div class="form-group">
                     {{ form_label(form.activity, "Description de votre activité") }}
                     {{ form_widget(form.activity, {'attr': {'class': 'form-control', 'rows': '5'}}) }}
+                    <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.activity) }}</div>
                 </div>
             </div>
 

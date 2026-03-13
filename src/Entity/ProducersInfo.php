@@ -5,11 +5,12 @@ namespace App\Entity;
 use App\Repository\ProducersInfoRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ProducersInfoRepository::class)]
 class ProducersInfo
 {
-    #[ORM\Id]
+   #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
@@ -18,22 +19,49 @@ class ProducersInfo
     private ?int $user_id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Le nom du responsable est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\s\-]+$/',
+        message: 'Le nom ne doit contenir que des lettres, des espaces ou des tirets.'
+    )]
     private ?string $contact_name = null;
 
     #[ORM\Column(length: 150)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+    #[Assert\Email(message: 'L\'adresse email "{{ value }}" n\'est pas valide.')]
     private ?string $email = null;
 
-
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
+    #[Assert\Length(min: 10, minMessage: 'L\'adresse semble trop courte.')]
     private ?string $address = null;
 
     #[ORM\Column(length: 50)]
+    #[Assert\NotBlank(message: 'Le numéro de téléphone est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/',
+        message: 'Le format du numéro de téléphone n\'est pas valide (ex: 0612345678).'
+    )]
     private ?string $phone = null;
 
     #[ORM\Column(length: 14)]
+    #[Assert\NotBlank(message: 'Le SIRET est obligatoire.')]
+    #[Assert\Length(
+        exactly: 14,
+        exactMessage: 'Le SIRET doit contenir exactement 14 caractères.'
+    )]
+    #[Assert\Regex(
+        pattern: '/^[0-9]{14}$/',
+        message: 'Le SIRET ne doit contenir QUE des chiffres, sans espaces.'
+    )]
     private ?string $siret = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[Assert\NotBlank(message: 'Une description de votre activité est requise.')]
+    #[Assert\Length(
+        min: 20,
+        minMessage: 'Votre description doit faire au moins 20 caractères pour être étudiée par la direction.'
+    )]
     private ?string $activity = null;
 
     #[ORM\Column]

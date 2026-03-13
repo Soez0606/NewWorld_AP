@@ -75,30 +75,65 @@ class ContractsCrudController extends AbstractCrudController
             return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
         }
 
-        // Calcul de la date de fin (Date du jour + 6 mois)
-        $endDate = new \DateTime();
-        $endDate->modify('+6 months');
+        //  1. NOUVELLE LOGIQUE : TACITE RECONDUCTION ANNUELLE 
+        $today = new \DateTime();
+        $endDate = $contract->getExpirationDate();
 
+        // Si pour une raison quelconque il n'y a pas de date de fin, on met aujourd'hui + 6 mois par défaut
+        if (!$endDate) {
+            $endDate = clone $today;
+            $endDate->modify('+6 months');
+        } else {
+            // On clone pour manipuler la date sans l'écraser immédiatement
+            $targetDate = clone $endDate;
+
+            // Boucle pour trouver la prochaine date d'anniversaire valide
+            // On utilise une boucle au cas où le contrat aurait été "oublié" pendant plusieurs années
+            while (true) {
+                // On calcule la date limite (deadline) = date anniversaire - 6 mois
+                $deadline = clone $targetDate;
+                $deadline->modify('-6 months');
+
+                // Si aujourd'hui on est AVANT ou LE JOUR de la deadline, on est bon !
+                if ($today <= $deadline) {
+                    break;
+                }
+
+                // Si on est APRÈS la deadline, on a raté le coche. 
+                // TACITE RECONDUCTION : On rajoute 1 an ferme à la date anniversaire.
+                $targetDate->modify('+1 year');
+            }
+            $endDate = $targetDate;
+        }
+
+        // On applique la date finale calculée
         $contract->setExpirationDate($endDate);
         $contract->setStatus('Résilié');
 
+        // --- 2. (LOG RGPD) ---
         /** @var \App\Entity\Users $adminUser */
         $adminUser = $this->getUser();
-
         if ($adminUser) {
             $log = new Logs();
             $log->setUserId($adminUser->getId());
-            $log->setAction("Résiliation du contrat #" . $contract->getId() . " par la direction.");
+            $log->setAction("Résiliation du contrat #" . $contract->getId() . " par la direction. Fin effective (reconduction annuelle) au " . $endDate->format('d/m/Y'));
             $log->setActionDate(new \DateTime());
             $em->persist($log);
         }
 
         $em->flush();
 
-        $this->addFlash('success', 'Le contrat a été résilié. Fin effective le ' . $endDate->format('d/m/Y'));
+        // --- 3. GESTION DE LA NOTIFICATION PAR MAIL ---
+        $producerUser = $em->getRepository(\App\Entity\Users::class)->find($contract->getUserId());
+        $email = $producerUser ? $producerUser->getEmail() : 'Email introuvable';
+
+        $this->addFlash('success', 'Le contrat a été résilié. Fin effective fixée au ' . $endDate->format('d/m/Y') . ' (Règle de la reconduction annuelle appliquée).');
+        $this->addFlash('warning', '⚠️ CAHIER DES CHARGES : Vous devez obligatoirement notifier ce préavis au producteur par mail à l\'adresse : ' . $email);
 
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
+
+
 
     public function validateNewContract(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator): Response
     {

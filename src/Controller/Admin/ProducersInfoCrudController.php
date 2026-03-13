@@ -50,7 +50,7 @@ class ProducersInfoCrudController extends AbstractCrudController
          return;
      }
 
-     // --- CORRECTION DE L'ERREUR UserInterface ---
+     //  CORRECTION DE L'ERREUR UserInterface 
      /** @var \App\Entity\Users $adminUser */
      $adminUser = $this->getUser();
 
