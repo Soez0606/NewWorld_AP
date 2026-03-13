@@ -1,21 +1,9 @@
 <?php
-// namespace App\Controller\Admin;
-
-// use App\Entity\Contracts;
-// use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
-
-// class ContractsCrudController extends AbstractCrudController
-// {
-//     public static function getEntityFqcn(): string
-//     {
-//         return Contracts::class;
-//     }
-// }
-
 
 namespace App\Controller\Admin;
 
 use App\Entity\Contracts;
+use App\Entity\Logs;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -48,7 +36,7 @@ class ContractsCrudController extends AbstractCrudController
                 return $entity->getStatus() !== 'Résilié';
             });
 
-            // NOUVELLE ACTION : Valider un nouveau contrat
+        // NOUVELLE ACTION : Valider un nouveau contrat
         $validateAction = Action::new('validateContract', 'Valider le contrat')
             ->linkToCrudAction('validateNewContract')
             ->addCssClass('btn btn-success')
@@ -94,6 +82,17 @@ class ContractsCrudController extends AbstractCrudController
         $contract->setExpirationDate($endDate);
         $contract->setStatus('Résilié');
 
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Résiliation du contrat #" . $contract->getId() . " par la direction.");
+            $log->setActionDate(new \DateTime());
+            $em->persist($log);
+        }
+
         $em->flush();
 
         $this->addFlash('success', 'Le contrat a été résilié. Fin effective le ' . $endDate->format('d/m/Y'));
@@ -119,6 +118,17 @@ class ContractsCrudController extends AbstractCrudController
         $contract->setSignatureDate($startDate);
         $contract->setExpirationDate($endDate);
         $contract->setStatus('En cours');
+
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Validation du nouveau contrat #" . $contract->getId());
+            $log->setActionDate(new \DateTime());
+            $em->persist($log);
+        }
 
         $em->flush();
 

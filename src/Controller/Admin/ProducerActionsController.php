@@ -4,6 +4,7 @@ namespace App\Controller\Admin;
 
 use App\Entity\ProducersInfo;
 use App\Entity\Users;
+use App\Entity\Logs;
 use App\Entity\Contracts;
 use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -97,7 +98,8 @@ class ProducerActionsController extends AbstractDashboardController
     public function approveAudit(int $id, Request $request): Response
     {
         $producer = $this->em->getRepository(ProducersInfo::class)->find($id);
-        if (!$producer) { /* ... */ }
+        if (!$producer) { /* ... */
+        }
 
         $producer->setStatusAudit(ProducersInfo::STATUS_APPROVED);
         $producer->setValidationAuditDate(new \DateTime());
@@ -110,22 +112,33 @@ class ProducerActionsController extends AbstractDashboardController
         $tempPassword = bin2hex(random_bytes(8));
         $user->setPassword(password_hash($tempPassword, PASSWORD_DEFAULT)); // Hashage simple pour l'exemple
         $user->setHasPassword(false); // Important pour forcer le changement de mdp
-        
+
         $this->em->persist($user);
         $this->em->flush(); // On flush pour avoir l'ID du user tout de suite
 
         // 2. Mise à jour du Producteur (Code existant)
         $producer->setUserId($user->getId());
 
-        // --- AJOUT : CRÉATION AUTOMATIQUE DU CONTRAT ---
+        //  AJOUT : CRÉATION AUTOMATIQUE DU CONTRAT 
         $contract = new Contracts();
         $contract->setUserId($user->getId());
         $contract->setSignatureDate(new \DateTime()); // Date du jour
         $contract->setNoticeMonths(6); // 6 mois selon le PDF
         $contract->setStatus('En cours'); // Statut actif
-        
+
         $this->em->persist($contract);
-        // -----------------------------------------------
+
+        //  NOUVEAU : CRÉATION DU LOG RGPD 
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Approbation de l'audit et création du compte pour le producteur #" . $producer->getId() . " (" . $producer->getContactName() . ")");
+            $log->setActionDate(new \DateTime());
+            $this->em->persist($log);
+        }
 
         $this->em->flush();
 
