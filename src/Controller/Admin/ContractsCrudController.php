@@ -26,31 +26,26 @@ class ContractsCrudController extends AbstractCrudController
 
     public function configureActions(Actions $actions): Actions
     {
-        // Création de l'action "Résilier"
         $terminateAction = Action::new('terminate', 'Résilier le contrat')
             ->linkToCrudAction('terminateContract')
             ->addCssClass('btn btn-danger')
             ->setIcon('fa fa-ban')
-            // Afficher seulement si le contrat n'est pas déjà résilié
             ->displayIf(static function ($entity) {
                 return $entity->getStatus() !== 'Résilié';
             });
 
-        // NOUVELLE ACTION : Valider un nouveau contrat
         $validateAction = Action::new('validateContract', 'Valider le contrat')
             ->linkToCrudAction('validateNewContract')
             ->addCssClass('btn btn-success')
             ->setIcon('fa fa-check')
             ->displayIf(static function ($entity) {
-                // S'affiche uniquement si le contrat est en attente
                 return $entity->getStatus() === 'En attente de validation';
             });
 
         return $actions
             ->add(Crud::PAGE_INDEX, $terminateAction)
             ->add(Crud::PAGE_DETAIL, $terminateAction)
-            ->add(Crud::PAGE_INDEX, $validateAction) // validation de la nouvelle demane de contrat
-            // Désactiver la suppression et l'ajout pour garder l'intégrité
+            ->add(Crud::PAGE_INDEX, $validateAction)
             ->disable(Action::DELETE, Action::NEW);
     }
 
@@ -62,20 +57,16 @@ class ContractsCrudController extends AbstractCrudController
         yield DateField::new('expiration_date', 'Date Fin');
         yield TextField::new('status', 'Statut');
     }
-
-    // La fonction qui fait le travail
     public function terminateContract(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator): Response
     {
         /** @var Contracts $contract */
         $contract = $context->getEntity()->getInstance();
 
-        // Vérification des droits (PDG ou Directrice uniquement)
         if (!$this->isGranted('ROLE_PDG') && !$this->isGranted('ROLE_DIRECTOR')) {
             $this->addFlash('danger', 'Vous n\'avez pas les droits pour résilier un contrat.');
             return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
         }
 
-        // Calcul de la date de fin (Date du jour + 6 mois)
         $endDate = new \DateTime();
         $endDate->modify('+6 months');
 
@@ -110,7 +101,6 @@ class ContractsCrudController extends AbstractCrudController
             return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
         }
 
-        // On active le contrat : Date du jour + calcul de la fin à 6 mois
         $startDate = new \DateTime();
         $endDate = clone $startDate;
         $endDate->modify('+6 months');

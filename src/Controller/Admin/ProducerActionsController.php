@@ -21,7 +21,6 @@ class ProducerActionsController extends AbstractDashboardController
     #[Route('/admin/producer', name: 'admin_producer')]
     public function index(): Response
     {
-        // Redirige vers la page des demandes en attente
         return $this->redirectToRoute('admin_pending_requests');
     }
 
@@ -60,10 +59,8 @@ class ProducerActionsController extends AbstractDashboardController
         $producer->setStatusAudit(ProducersInfo::STATUS_AUDIT_REQUIRED);
         $this->em->flush();
 
-        // Générer le lien mailto
         $mailtoLink = $this->generateValidationEmail($producer);
 
-        // Stocker en session
         $request->getSession()->set('pending_mailto', $mailtoLink);
 
         $this->addFlash('success', 'Demande validée ! Un email d\'audit doit être envoyé.');
@@ -104,31 +101,27 @@ class ProducerActionsController extends AbstractDashboardController
         $producer->setStatusAudit(ProducersInfo::STATUS_APPROVED);
         $producer->setValidationAuditDate(new \DateTime());
 
-        // 1. Création du User (Code existant)
         $user = new Users();
         $user->setName($producer->getContactName());
         $user->setEmail($producer->getEmail());
         $user->setRoleId(Users::ROLE_PRODUCER);
         $tempPassword = bin2hex(random_bytes(8));
-        $user->setPassword(password_hash($tempPassword, PASSWORD_DEFAULT)); // Hashage simple pour l'exemple
-        $user->setHasPassword(false); // Important pour forcer le changement de mdp
+        $user->setPassword(password_hash($tempPassword, PASSWORD_DEFAULT));
+        $user->setHasPassword(false);
 
         $this->em->persist($user);
-        $this->em->flush(); // On flush pour avoir l'ID du user tout de suite
+        $this->em->flush();
 
-        // 2. Mise à jour du Producteur (Code existant)
         $producer->setUserId($user->getId());
 
-        //  AJOUT : CRÉATION AUTOMATIQUE DU CONTRAT 
         $contract = new Contracts();
         $contract->setUserId($user->getId());
-        $contract->setSignatureDate(new \DateTime()); // Date du jour
-        $contract->setNoticeMonths(6); // 6 mois selon le PDF
-        $contract->setStatus('En cours'); // Statut actif
+        $contract->setSignatureDate(new \DateTime());
+        $contract->setNoticeMonths(6);
+        $contract->setStatus('En cours');
 
         $this->em->persist($contract);
 
-        //  NOUVEAU : CRÉATION DU LOG RGPD 
         /** @var \App\Entity\Users $adminUser */
         $adminUser = $this->getUser();
 
@@ -226,7 +219,6 @@ class ProducerActionsController extends AbstractDashboardController
         return "mailto:{$to}?subject=" . urlencode($subject) . "&body=" . urlencode($body);
     }
 
-    // Méthode requise par AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
@@ -234,10 +226,8 @@ class ProducerActionsController extends AbstractDashboardController
             ->setFaviconPath('favicon.ico');
     }
 
-    // Méthode requise par AbstractDashboardController
     public function configureMenuItems(): iterable
     {
-        // Vous pouvez retourner un tableau vide ou configurer le menu
         return [];
     }
 }
