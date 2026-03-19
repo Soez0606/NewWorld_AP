@@ -125,10 +125,25 @@ class ContractsCrudController extends AbstractCrudController
 
         // --- 3. GESTION DE LA NOTIFICATION PAR MAIL ---
         $producerUser = $em->getRepository(\App\Entity\Users::class)->find($contract->getUserId());
-        $email = $producerUser ? $producerUser->getEmail() : 'Email introuvable';
+        $email = $producerUser ? $producerUser->getEmail() : '';
+        $producerName = $producerUser ? $producerUser->getName() : 'Cher partenaire';
 
-        $this->addFlash('success', 'Le contrat a été résilié. Fin effective fixée au ' . $endDate->format('d/m/Y') . ' (Règle de la reconduction annuelle appliquée).');
-        $this->addFlash('warning', '⚠️ CAHIER DES CHARGES : Vous devez obligatoirement notifier ce préavis au producteur par mail à l\'adresse : ' . $email);
+        // On prépare l'objet et le corps du mail
+        $subject = "Notification de résiliation de votre contrat New World";
+        $body = "Bonjour {$producerName},\n\n";
+        $body .= "Par la présente, la direction de New World vous notifie la résiliation de votre contrat de partenariat.\n";
+        $body .= "Conformément à nos engagements (préavis de 6 mois à date anniversaire), votre contrat prendra fin de manière effective le " . $endDate->format('d/m/Y') . ".\n\n";
+        $body .= "Nous vous remercions pour notre collaboration.\n\nCordialement,\nLa Direction New World";
+
+        // On crée le lien cliquable
+        $mailtoLink = "mailto:{$email}?subject=" . urlencode($subject) . "&body=" . urlencode($body);
+
+        // On affiche un message avec un bouton pour envoyer le mail directement
+        $this->addFlash('success', 'Le contrat a été résilié (Fin le ' . $endDate->format('d/m/Y') . ').');
+        
+        if ($email) {
+            $this->addFlash('warning', '⚠️ OBLIGATION LÉGALE : <a href="' . $mailtoLink . '" class="btn btn-sm btn-dark ms-2" target="_blank">Cliquez ici pour envoyer la notification par mail</a>');
+        }
 
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
