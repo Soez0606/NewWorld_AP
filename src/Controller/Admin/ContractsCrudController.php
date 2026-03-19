@@ -75,21 +75,26 @@ class ContractsCrudController extends AbstractCrudController
 
         /** @var \App\Entity\Users $adminUser */
         $adminUser = $this->getUser();
-
         if ($adminUser) {
             $log = new Logs();
             $log->setUserId($adminUser->getId());
-            $log->setAction("Résiliation du contrat #" . $contract->getId() . " par la direction.");
+            $log->setAction("Résiliation du contrat #" . $contract->getId() . " par la direction. Fin effective (reconduction annuelle) au " . $endDate->format('d/m/Y'));
             $log->setActionDate(new \DateTime());
             $em->persist($log);
         }
 
         $em->flush();
 
-        $this->addFlash('success', 'Le contrat a été résilié. Fin effective le ' . $endDate->format('d/m/Y'));
+        $producerUser = $em->getRepository(\App\Entity\Users::class)->find($contract->getUserId());
+        $email = $producerUser ? $producerUser->getEmail() : 'Email introuvable';
+
+        $this->addFlash('success', 'Le contrat a été résilié. Fin effective fixée au ' . $endDate->format('d/m/Y') . ' (Règle de la reconduction annuelle appliquée).');
+        $this->addFlash('warning', '⚠️ CAHIER DES CHARGES : Vous devez obligatoirement notifier ce préavis au producteur par mail à l\'adresse : ' . $email);
 
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
+
+
 
     public function validateNewContract(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator): Response
     {

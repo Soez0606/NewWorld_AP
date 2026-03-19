@@ -4,21 +4,29 @@ namespace App\Entity;
 
 use App\Repository\UsersRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UsersRepository::class)]
 class Users implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
+   #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 100)]
+    #[Assert\NotBlank(message: 'Le nom est obligatoire.')]
+    #[Assert\Regex(
+        pattern: '/^[a-zA-ZÀ-ÿ\s\-]+$/',
+        message: 'Le nom ne doit contenir que des lettres.'
+    )]
     private ?string $name = null;
 
     #[ORM\Column(length: 150, unique: true)]
+    #[Assert\NotBlank(message: 'L\'email est obligatoire.')]
+    #[Assert\Email(message: 'L\'adresse email n\'est pas valide.')]
     private ?string $email = null;
 
     #[ORM\Column(length: 255,  nullable: true)]

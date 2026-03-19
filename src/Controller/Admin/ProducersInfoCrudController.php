@@ -39,12 +39,13 @@ class ProducersInfoCrudController extends AbstractCrudController
             ->remove(Crud::PAGE_INDEX, Action::NEW);
     }
     public function deleteEntity(EntityManagerInterface $entityManager, $entityInstance): void
-    {
-        if (!$entityInstance instanceof ProducersInfo) {
-            return;
-        }
-        /** @var \App\Entity\Users $adminUser */
-        $adminUser = $this->getUser();
+ {
+     if (!$entityInstance instanceof ProducersInfo) {
+         return;
+     }
+
+     /** @var \App\Entity\Users $adminUser */
+     $adminUser = $this->getUser();
 
         $archive = new Archives();
         $archive->setUserId($entityInstance->getUserId() ?? 0);

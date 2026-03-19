@@ -114,33 +114,38 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ form_label(form.contact_name, "Nom du responsable", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
-                                            {{ form_widget(form.contact_name, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Ex: Jean Dupont'}}) }}
+                                            {{ form_widget(form.contact_name, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Ex: Prénom et Nom*'}}) }}
+                                            <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.contact_name) }}</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ form_label(form.email, "Email professionnel", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
-                                            {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'contact@votre-ferme.fr'}}) }}
+                                            {{ form_widget(form.email, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Email*'}}) }}
+                                            <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.email) }}</div>
                                         </div>
                                     </div>
 
                                     <div class="col-12">
                                         <div class="form-group">
                                             {{ form_label(form.address, "Adresse de l'exploitation", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
-                                            {{ form_widget(form.address, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'N°, rue, code postal et ville'}}) }}
+                                            {{ form_widget(form.address, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Adresse*'}}) }}
+                                            <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.address) }}</div>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ form_label(form.phone, "Téléphone", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
-                                            {{ form_widget(form.phone, {'attr': {'class': 'form-control form-control-lg', 'placeholder': '06 .. .. .. ..'}}) }}
+                                            {{ form_widget(form.phone, {'attr': {'class': 'form-control form-control-lg', 'placeholder': 'Tel*'}}) }}
+                                            <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.phone) }}</div>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             {{ form_label(form.siret, "Numéro SIRET", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
                                             {{ form_widget(form.siret, {'attr': {'class': 'form-control form-control-lg', 'placeholder': '14 chiffres'}}) }}
+                                            <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.siret) }}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -156,9 +161,11 @@
                                         {{ form_label(form.activity, "Décrivez vos produits et votre méthode", {'label_attr': {'class': 'form-label fw-bold small text-uppercase text-success'}}) }}
                                         {{ form_widget(form.activity, {'attr': {
                                             'class': 'form-control form-control-lg',
-                                            'placeholder': 'Ex: Maraîchage biologique, élevage plein air, fruits de saison...',
+                                            'placeholder': 'Ex: Activity* ',
                                             'rows': '5'
                                         }}) }}
+
+                                        <div class="text-danger small mt-1 fw-bold">{{ form_errors(form.activity) }}</div>
                                         <div class="form-text mt-2 italic text-muted">
                                             <i class="fas fa-info-circle me-1"></i> Cette description sera lue par notre équipe lors de l'examen de votre dossier.
                                         </div>
