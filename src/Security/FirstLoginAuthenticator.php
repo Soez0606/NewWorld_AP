@@ -39,7 +39,6 @@ class FirstLoginAuthenticator extends AbstractAuthenticator implements Authentic
             throw new CustomUserMessageAuthenticationException('Email requis.');
         }
 
-        // Trouver l'utilisateur
         $user = $this->entityManager->getRepository(Users::class)->findOneBy(['email' => $email]);
 
         if (!$user) {
@@ -50,19 +49,14 @@ class FirstLoginAuthenticator extends AbstractAuthenticator implements Authentic
             throw new CustomUserMessageAuthenticationException('Compte désactivé.');
         }
 
-        // CAS 1 : Première connexion (pas encore de mot de passe)
         if (!$user->getHasPassword()) {
-            // Authentification directe - pas besoin de vérifier le mot de passe
             return new SelfValidatingPassport(new UserBadge($email));
         }
 
-        // CAS 2 : L'utilisateur a déjà un mot de passe
         if (empty($password)) {
             throw new CustomUserMessageAuthenticationException('Mot de passe requis.');
         }
 
-        // Pour les connexions avec mot de passe, on utilise un SelfValidatingPassport
-        // Symfony vérifiera le mot de passe automatiquement via le UserProvider
         return new SelfValidatingPassport(new UserBadge($email));
     }
 
@@ -71,32 +65,25 @@ class FirstLoginAuthenticator extends AbstractAuthenticator implements Authentic
         /** @var Users $user */
         $user = $token->getUser();
 
-        //1. Rediriger vers la page de création de mot de passe si c'est la première connexion
         if (!$user->getHasPassword()) {
             return new RedirectResponse($this->urlGenerator->generate('app_set_password'));
         }
 
-        // 2. Si c'est un PRODUCTEUR -> Direction Espace Producteur
         if (in_array('ROLE_PRODUCER', $user->getRoles())) {
             return new RedirectResponse($this->urlGenerator->generate('producer_space_home'));
         }
 
-        // 3. Sinon (Admin, PDG, Secrétaire...) -> Direction Dashboard Admin
         return new RedirectResponse($this->urlGenerator->generate('admin'));
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        // Stocker l'erreur dans la session pour l'afficher dans le formulaire
         $request->getSession()->set('_security.last_error', $exception);
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }
 
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        // Quand un utilisateur non authentifié essaie d'accéder à une page protégée
         return new RedirectResponse($this->urlGenerator->generate('app_login'));
     }
-
-   
 }

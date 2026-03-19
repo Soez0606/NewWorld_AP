@@ -36,8 +36,6 @@ class TerminationRequestCrudController extends AbstractCrudController
             ->setDefaultSort(['expiration_date' => 'ASC'])
             ->setPaginatorPageSize(20);
     }
-
-    // 1. LE FILTRE MAGIQUE : On ne montre que les demandes
     public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
         return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
@@ -45,14 +43,13 @@ class TerminationRequestCrudController extends AbstractCrudController
             ->setParameter('status', 'Demande de résiliation');
     }
 
-  public function configureFields(string $pageName): iterable
+    public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->hideOnForm();
         yield DateField::new('signature_date', 'Signature');
         yield DateField::new('expiration_date', 'Date Fin Prévue')
             ->setHelp('Calculée automatiquement (Préavis 2 mois)');
 
-        // CORRECTION ICI : On utilise ChoiceField au lieu de TextField
         yield ChoiceField::new('status', 'Statut')
             ->setChoices([
                 'En cours' => 'En cours',
@@ -60,15 +57,14 @@ class TerminationRequestCrudController extends AbstractCrudController
                 'Résilié' => 'Résilié',
             ])
             ->renderAsBadges([
-                'En cours' => 'success',       // Vert
-                'Demande de résiliation' => 'warning', // Orange/Jaune
-                'Résilié' => 'danger',         // Rouge
+                'En cours' => 'success',
+                'Demande de résiliation' => 'warning',
+                'Résilié' => 'danger',
             ]);
     }
 
     public function configureActions(Actions $actions): Actions
     {
-        // 2. L'ACTION DE VALIDATION
         $validateAction = Action::new('validateTermination', 'Accepter la résiliation')
             ->linkToCrudAction('validateTermination')
             ->addCssClass('btn btn-success')
@@ -76,22 +72,18 @@ class TerminationRequestCrudController extends AbstractCrudController
 
         return $actions
             ->add(Crud::PAGE_INDEX, $validateAction)
-            ->disable(Action::NEW, Action::DELETE, Action::EDIT); // On veut juste voir et valider
+            ->disable(Action::NEW, Action::DELETE, Action::EDIT);
     }
-
-    // 3. LA LOGIQUE MÉTIER
     public function validateTermination(AdminContext $context, EntityManagerInterface $em, AdminUrlGenerator $adminUrlGenerator): Response
     {
         /** @var Contracts $contract */
         $contract = $context->getEntity()->getInstance();
 
-        // On valide définitivement
         $contract->setStatus('Résilié');
         $em->flush();
 
         $this->addFlash('success', 'La résiliation a été acceptée. Le contrat est maintenant terminé.');
 
-        // On recharge la page (la ligne disparaitra car elle n'a plus le statut "Demande...")
         return $this->redirect($adminUrlGenerator->setController(self::class)->setAction(Action::INDEX)->generateUrl());
     }
 }
