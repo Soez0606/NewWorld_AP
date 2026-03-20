@@ -27,7 +27,10 @@ class Contracts
 
     #[ORM\Column(length: 255)]
     private ?string $status = null;
+    #[ORM\Column(type: \Doctrine\DBAL\Types\Types::TEXT, nullable: true)]
+    private ?string $activity_description = null;
 
+   
     public function getId(): ?int
     {
         return $this->id;
@@ -92,4 +95,16 @@ class Contracts
 
         return $this;
     }
+     public function getActivityDescription(): ?string
+    {
+        return $this->activity_description;
+    }
+
+    public function setActivityDescription(?string $activity_description): static
+    {
+        $this->activity_description = $activity_description;
+
+        return $this;
+    }
+
 }

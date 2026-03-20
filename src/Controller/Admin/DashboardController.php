@@ -43,6 +43,8 @@ class DashboardController extends AbstractDashboardController
 
         $terminationRequestsCount = $this->em->getRepository(Contracts::class)->count(['status' => 'Demande de résiliation']);
 
+        $pendingContractsCount = $this->em->getRepository(Contracts::class)->count(['status' => 'En attente de validation']);
+
         return $this->render('admin/dashboard.html.twig', [
             'pendingCount' => $pendingCount,
             'auditRequiredCount' => $auditRequiredCount,
@@ -50,6 +52,7 @@ class DashboardController extends AbstractDashboardController
             'activeContracts' => $activeContracts,
             'totalUsers' => $totalUsers,
             'terminationRequestsCount' => $terminationRequestsCount,
+            'pendingContractsCount' => $pendingContractsCount,
         ]);
     }
 
@@ -101,9 +104,11 @@ class DashboardController extends AbstractDashboardController
                 ->setController(TerminationRequestCrudController::class)
                 ->setBadge($terminationCount, $terminationCount > 0 ? 'danger' : 'secondary');
 
+            // Remplace la ligne "Tous les Contrats" par ceci :
+            $pendingContractsCount = $this->em->getRepository(Contracts::class)->count(['status' => 'En attente de validation']);
             yield MenuItem::linkToCrud('Tous les Contrats', 'fa fa-file-signature', Contracts::class)
-                ->setController(ContractsCrudController::class);
-            yield MenuItem::linkToCrud('Archives', 'fa fa-archive', Archives::class);
+                ->setController(ContractsCrudController::class)
+                ->setBadge($pendingContractsCount, $pendingContractsCount > 0 ? 'success' : 'secondary');yield MenuItem::linkToCrud('Archives', 'fa fa-archive', Archives::class);
         }
 
         // --- SYSTÈME ---

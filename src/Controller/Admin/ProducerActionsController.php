@@ -57,6 +57,16 @@ class ProducerActionsController extends AbstractDashboardController
         }
 
         $producer->setStatusAudit(ProducersInfo::STATUS_AUDIT_REQUIRED);
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Validation de la demande (Passage en Audit) pour : " . $producer->getContactName());
+            $log->setActionDate(new \DateTime());
+            $this->em->persist($log);
+        }
+
         $this->em->flush();
 
         $mailtoLink = $this->generateValidationEmail($producer);
@@ -80,6 +90,16 @@ class ProducerActionsController extends AbstractDashboardController
         }
 
         $this->em->remove($producer);
+
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Refus direct de la demande d'inscription de : " . $producer->getContactName());
+            $log->setActionDate(new \DateTime());
+            $this->em->persist($log);
+        }
         $this->em->flush();
 
         $mailtoLink = $this->generateRejectionEmail($producer);
@@ -155,6 +175,15 @@ class ProducerActionsController extends AbstractDashboardController
 
         $producer->setStatusAudit(ProducersInfo::STATUS_AUDIT_REJECTED);
         $producer->setArchived(true);
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Refus de l'audit pour le producteur : " . $producer->getContactName());
+            $log->setActionDate(new \DateTime());
+            $this->em->persist($log);
+        }
         $this->em->flush();
 
         $mailtoLink = $this->generateAuditRejectionEmail($producer);

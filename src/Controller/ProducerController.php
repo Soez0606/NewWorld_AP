@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Controller;
-
+use App\Entity\Logs;
 use App\Entity\ProducersInfo;
 use App\Form\ProducerRegistrationType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,6 +33,13 @@ class ProducerController extends AbstractController
             $producerInfo->setUserId(0);
 
             $em->persist($producerInfo);
+
+            // On met l'ID 0 car c'est une action publique (le producteur n'a pas encore de compte)
+            $log = new Logs();
+            $log->setUserId(0); 
+            $log->setAction("Nouvelle demande d'inscription publique soumise (SIRET: " . $producerInfo->getSiret() . ")");
+            $log->setActionDate(new \DateTime());
+            $em->persist($log);
             $em->flush();
 
             $request->getSession()->set('last_producer_id', $producerInfo->getId());

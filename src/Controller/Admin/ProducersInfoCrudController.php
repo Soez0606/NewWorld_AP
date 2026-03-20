@@ -83,4 +83,20 @@ class ProducersInfoCrudController extends AbstractCrudController
         $entityManager->remove($entityInstance);
         $entityManager->flush();
     }
+
+    public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        if ($entityInstance instanceof ProducersInfo) {
+            /** @var \App\Entity\Users $adminUser */
+            $adminUser = $this->getUser();
+            if ($adminUser) {
+                $log = new Logs();
+                $log->setUserId($adminUser->getId());
+                $log->setAction("Modification manuelle des informations du producteur : " . $entityInstance->getContactName());
+                $log->setActionDate(new \DateTime());
+                $entityManager->persist($log);
+            }
+        }
+        parent::updateEntity($entityManager, $entityInstance);
+    }
 }

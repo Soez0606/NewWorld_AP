@@ -3,6 +3,7 @@
 namespace App\Controller\Admin;
 
 use App\Entity\Contracts;
+use App\Entity\Logs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -80,6 +81,15 @@ class TerminationRequestCrudController extends AbstractCrudController
         $contract = $context->getEntity()->getInstance();
 
         $contract->setStatus('Résilié');
+        /** @var \App\Entity\Users $adminUser */
+        $adminUser = $this->getUser();
+        if ($adminUser) {
+            $log = new Logs();
+            $log->setUserId($adminUser->getId());
+            $log->setAction("Acceptation de la demande de résiliation pour le contrat #" . $contract->getId());
+            $log->setActionDate(new \DateTime());
+            $em->persist($log);
+        }
         $em->flush();
 
         $this->addFlash('success', 'La résiliation a été acceptée. Le contrat est maintenant terminé.');

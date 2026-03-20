@@ -20,6 +20,16 @@
 </div>
 {% endif %}
 
+{% if pendingContractsCount > 0 %}
+<div class="alert alert-success alert-dismissible fade show shadow-sm border-0" style="background-color: #e8f5e9; color: #2d6a4f;">
+    <h4 class="fw-bold"><i class="fa fa-file-signature"></i> {{ pendingContractsCount }} nouveau(x) contrat(s) en attente !</h4>
+    <p>Des producteurs souhaitent diversifier leur activité et proposent de nouveaux contrats.</p>
+    <a href="{{ path('admin') }}?crudAction=index&crudControllerFqcn=App%5CController%5CAdmin%5CContractsCrudController" class="btn btn-success fw-bold">
+        Consulter les contrats
+    </a>
+</div>
+{% endif %}
+
 <!-- Statistiques -->
 <div class="row mt-4">
     <div class="col-md-2">

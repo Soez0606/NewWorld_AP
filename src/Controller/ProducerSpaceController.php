@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\ProducersInfo;
 use App\Entity\Contracts;
+use App\Entity\Logs;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Form\ProducerProfileType;
@@ -38,6 +39,11 @@ class ProducerSpaceController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $log = new Logs();
+            $log->setUserId($user->getId());
+            $log->setAction("Mise à jour de ses informations de profil par le producteur.");
+            $log->setActionDate(new \DateTime());
+            $em->persist($log);
             $em->flush();
             $this->addFlash('success', 'Vos informations ont été mises à jour avec succès.');
 
@@ -65,7 +71,9 @@ class ProducerSpaceController extends AbstractController
     }
 
     #[Route('/nouveau-contrat', name: 'producer_request_new_contract')]
-    public function requestNewContract(EntityManagerInterface $em): Response
+   // N'oublie pas d'ajouter methods: ['POST'] ici si ce n'est pas fait !
+    #[Route('/nouveau-contrat', name: 'producer_request_new_contract', methods: ['POST'])]
+    public function requestNewContract(Request $request, EntityManagerInterface $em): Response // <-- La correction est ici (Request $request)
     {
         /** @var \App\Entity\Users $user */
         $user = $this->getUser();
@@ -78,11 +86,22 @@ class ProducerSpaceController extends AbstractController
             }
         }
 
+        // On récupère le texte du formulaire (Maintenant que $request est défini, ça marche !)
+        $newActivity = $request->request->get('new_activity');
+
         $contract = new Contracts();
         $contract->setUserId($user->getId());
         $contract->setSignatureDate(new \DateTime());
         $contract->setNoticeMonths(6);
         $contract->setStatus('En attente de validation');
+        $contract->setActivityDescription($newActivity);
+
+        // <-- La simplification est ici (new Logs() au lieu de new \App\Entity\Logs())
+        $log = new Logs(); 
+        $log->setUserId($user->getId());
+        $log->setAction("Demande d'un contrat supplémentaire par le producteur.");
+        $log->setActionDate(new \DateTime());
+        $em->persist($log);
 
         $em->persist($contract);
         $em->flush();
@@ -114,6 +133,13 @@ class ProducerSpaceController extends AbstractController
         $endDate->modify('+2 months');
         $contract->setExpirationDate($endDate);
 
+        $log = new Logs();
+        $log->setUserId($user->getId());
+        $log->setAction("Demande de résiliation du contrat #" . $contract->getId() . " initiée par le producteur.");
+        $log->setActionDate(new \DateTime());
+        $em->persist($log);
+
+        
         $em->flush();
 
         $this->addFlash('success', 'Votre demande a été prise en compte. Votre contrat prendra fin le ' . $endDate->format('d/m/Y') . ' (Préavis de 2 mois).');

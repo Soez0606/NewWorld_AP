@@ -40,4 +40,17 @@ class ArchivesRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    /**
+     * Supprime les archives antérieures à une date donnée.
+     * Retourne le nombre de lignes supprimées.
+     */
+    public function deleteOlderThan(\DateTime $limitDate): int
+    {
+        return $this->createQueryBuilder('a')
+            ->delete()
+            ->where('a.archive_date < :date')
+            ->setParameter('date', $limitDate)
+            ->getQuery()
+            ->execute();
+    }
 }

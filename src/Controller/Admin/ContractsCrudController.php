@@ -15,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use Symfony\Component\HttpFoundation\Response;
 
 class ContractsCrudController extends AbstractCrudController
@@ -53,6 +54,8 @@ class ContractsCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->hideOnForm();
         yield IntegerField::new('user_id', 'ID Utilisateur')->setDisabled();
+        yield TextareaField::new('activity_description', 'Activité concernée par ce contrat')
+            ->setHelp('Laissez vide si c\'est l\'activité principale du producteur.');
         yield DateField::new('signature_date', 'Date Signature');
         yield DateField::new('expiration_date', 'Date Fin');
         yield TextField::new('status', 'Statut');
@@ -101,7 +104,7 @@ class ContractsCrudController extends AbstractCrudController
 
         // On affiche un message avec un bouton pour envoyer le mail directement
         $this->addFlash('success', 'Le contrat a été résilié (Fin le ' . $endDate->format('d/m/Y') . ').');
-        
+
         if ($email) {
             $this->addFlash('warning', '⚠️ OBLIGATION LÉGALE : <a href="' . $mailtoLink . '" class="btn btn-sm btn-dark ms-2" target="_blank">Cliquez ici pour envoyer la notification par mail</a>');
         }
